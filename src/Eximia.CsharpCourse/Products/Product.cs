@@ -20,4 +20,12 @@ public class Product : AggregateRoot<int>
 
     public string Description { get; } = string.Empty;
     public IEnumerable<IDiscountStrategy> DiscountStrategies => _discountStrategies;
+
+    public decimal CalculateDiscount(DiscountStrategyContext context)
+    {
+        decimal discount = 0;
+        foreach (var discountStrategy in _discountStrategies)
+            discount += discountStrategy.Calculate(context);
+        return discount;
+    }
 }

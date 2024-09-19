@@ -1,6 +1,6 @@
 ﻿namespace Eximia.CsharpCourse.SeedWork.EFCore;
 
-public class DocwayFinancialDBContextAccessor : IEFDbContextAccessor<EximiaCsharpCourseDbContext>
+public class EximiaCsharpCourseDbContextAccessor : IEFDbContextAccessor<EximiaCsharpCourseDbContext>
 {
     private EximiaCsharpCourseDbContext? _context;
 

@@ -1,4 +1,5 @@
-﻿using Eximia.CsharpCourse.Orders.Status;
+﻿using Eximia.CsharpCourse.Orders.DomainEvents;
+using Eximia.CsharpCourse.Orders.States;
 using Eximia.CsharpCourse.SeedWork;
 
 namespace Eximia.CsharpCourse.Orders;
@@ -11,16 +12,33 @@ public partial class Order : AggregateRoot<int>
 
     public Order(
         int id,
-        IOrderStatus status,
+        IOrderState state,
         ICollection<Item> items,
-        PaymentMethodInfo paymentMethod) : base(id)
+        PaymentMethodInfo paymentMethod,
+        DateTime date) : base(id)
     {
-        Status = status;
+        State = state;
         _items = items ?? [];
         PaymentMethod = paymentMethod;
+        Date = date;
     }
 
-    public IOrderStatus Status { get; } = null!;
+    public IOrderState State { get; } = null!;
     public IEnumerable<Item> Items => _items;
     public PaymentMethodInfo PaymentMethod { get; } = null!;
+    public DateTime Date { get; }
+    public decimal Amount => _items.Sum(i => i.Amount); 
+
+    public static Order Create(ICollection<Item> items, PaymentMethodInfo paymentMethod)
+    {
+        var order = new Order(
+            id: 0,
+            state: new AwaitingProcessingState(),
+            items,
+            paymentMethod,
+            date: DateTime.UtcNow);
+
+        order.AddDomainEvent(new OrderCreatedDomainEvent(order));
+        return order;
+    }
 }

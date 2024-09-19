@@ -1,4 +1,5 @@
-﻿using Eximia.CsharpCourse.Products;
+﻿using Eximia.CsharpCourse.Orders;
+using Eximia.CsharpCourse.Products;
 using Eximia.CsharpCourse.SeedWork.EFCore.Mappings;
 using Eximia.CsharpCourse.SeedWork.Extensions;
 using MediatR;
@@ -16,6 +17,7 @@ public class EximiaCsharpCourseDbContext : DbContext, IUnitOfWork
     }
 
     public DbSet<Product> Products { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {

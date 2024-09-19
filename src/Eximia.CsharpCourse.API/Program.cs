@@ -1,25 +1,45 @@
+using Autofac.Extensions.DependencyInjection;
+using Autofac;
+using Eximia.CsharpCourse.API.Infrastructure;
+using Eximia.CsharpCourse.API.Infrastructure.AutofacModules;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder
+    .Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddUserSecrets<Program>()
+    .AddEnvironmentVariables();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services
+    .AddCustomOptions(builder.Configuration)
+    .ConfigureFlurl()
+    .AddHealth(builder.Configuration)
+    .RemoveModelValidation()
+    .AddVersioning()
+    .AddSwagger()
+    .AddBus()
+    .AddControllersWithFilter();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    containerBuilder.RegisterModule(new ApplicationModule());
+    containerBuilder.RegisterModule(new InfrastructureModule());
+    containerBuilder.RegisterModule(new MediatorModule());
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseHealthChecks("/health-check");
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

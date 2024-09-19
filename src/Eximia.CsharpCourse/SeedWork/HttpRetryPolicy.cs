@@ -10,7 +10,7 @@ public class HttpRetryPolicy
     public static AsyncRetryPolicy AsyncRetryPolicy
         => Policy
             .Handle<FlurlHttpException>(IsTransientError)
-            .WaitAndRetryAsync(5, retry => TimeSpan.FromSeconds(Math.Pow(2, retry)));
+            .WaitAndRetryAsync(retryCount: 3, retry => TimeSpan.FromSeconds(Math.Pow(2, retry)));
 
     private static bool IsTransientError(FlurlHttpException exception)
     {

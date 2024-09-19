@@ -13,6 +13,11 @@ public class OrderEFMap : IEntityTypeConfiguration<Order>
         builder.ToTable("Orders");
         builder.HasKey(o => o.Id);
 
+        builder.Property(o => o.Date)
+            .HasColumnType("datetime")
+            .HasConversion(new DateTimeUtcConverter())
+            .IsRequired();
+
         builder.OwnsOne(o => o.PaymentMethod, paymentMethod =>
         {
             paymentMethod
@@ -26,8 +31,9 @@ public class OrderEFMap : IEntityTypeConfiguration<Order>
         });
 
         builder
-            .Property(p => p.Status)
+            .Property(p => p.State)
             .HasColumnType("varchar(50)")
+            .HasColumnName("Status")
             .HasConversion(new OrderStatusConverter())
             .IsRequired();
 

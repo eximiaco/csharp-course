@@ -2,27 +2,21 @@
 
 public class SeasonalDiscountStrategy : IDiscountStrategy
 {
-    public SeasonalDiscountStrategy(Dictionary<SeasonalDiscountStrategyPeriodDto, decimal> seasonalDiscount)
+    public SeasonalDiscountStrategy(Dictionary<DateTime, decimal> seasonalDiscount)
     {
         SeasonalDiscount = seasonalDiscount;
     }
 
-    public Dictionary<SeasonalDiscountStrategyPeriodDto, decimal> SeasonalDiscount { get; }
+    public Dictionary<DateTime, decimal> SeasonalDiscount { get; }
 
     public decimal Calculate(DiscountStrategyContext context)
     {
         foreach (var item in SeasonalDiscount)
         {
-            if (item.Key.IsInPeriod(context.OrderDate))
-                return item.Value;
+            if (context.OrderDate <= item.Key)
+                return item.Value * context.Amount / 100;
         }
 
         return 0;
-    }
-
-    public readonly record struct SeasonalDiscountStrategyPeriodDto(DateTime StartDate, DateTime EndDate)
-    {
-        public bool IsInPeriod(DateTime dateTime)
-            => dateTime >= StartDate && dateTime <= EndDate;
     }
 }
