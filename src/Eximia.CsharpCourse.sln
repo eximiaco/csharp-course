@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse.API", "Eximia.CsharpCourse.API\Eximia.CsharpCourse.API.csproj", "{0ECA81CD-7FEE-4637-A3E3-8DF8BFB7BCC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse.API", "Eximia.CsharpCourse.API\Eximia.CsharpCourse.API.csproj", "{0ECA81CD-7FEE-4637-A3E3-8DF8BFB7BCC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse", "Eximia.CsharpCourse\Eximia.CsharpCourse.csproj", "{E223D85C-56B7-4755-B74B-D7DEB6F281C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse", "Eximia.CsharpCourse\Eximia.CsharpCourse.csproj", "{E223D85C-56B7-4755-B74B-D7DEB6F281C0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{A275E07D-7193-4C21-88F0-0547941D851D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse.Migrations", "Eximia.CsharpCourse.Migrations\Eximia.CsharpCourse.Migrations.csproj", "{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{E223D85C-56B7-4755-B74B-D7DEB6F281C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E223D85C-56B7-4755-B74B-D7DEB6F281C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E223D85C-56B7-4755-B74B-D7DEB6F281C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

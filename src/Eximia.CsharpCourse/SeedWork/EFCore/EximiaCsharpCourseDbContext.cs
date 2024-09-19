@@ -1,4 +1,6 @@
-﻿using Eximia.CsharpCourse.SeedWork.Extensions;
+﻿using Eximia.CsharpCourse.Products;
+using Eximia.CsharpCourse.SeedWork.EFCore.Mappings;
+using Eximia.CsharpCourse.SeedWork.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,8 @@ public class EximiaCsharpCourseDbContext : DbContext, IUnitOfWork
         _mediator = mediator;
     }
 
+    public DbSet<Product> Products { get; set; }
+
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
         var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -22,6 +26,8 @@ public class EximiaCsharpCourseDbContext : DbContext, IUnitOfWork
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
+        modelBuilder.ApplyConfiguration(new ProductEFMap());
+        modelBuilder.ApplyConfiguration(new OrderEFMap());
+        modelBuilder.ApplyConfiguration(new OrderItemEFMap());
     }
 }
