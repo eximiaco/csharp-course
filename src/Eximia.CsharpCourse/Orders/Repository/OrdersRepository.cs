@@ -1,5 +1,7 @@
-﻿using Eximia.CsharpCourse.SeedWork;
+﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.SeedWork;
 using Eximia.CsharpCourse.SeedWork.EFCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Eximia.CsharpCourse.Orders.Repository;
 
@@ -21,5 +23,19 @@ public class OrdersRepository : IOrdersRepository
             .Orders
             .AddAsync(order, cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    public async Task<Maybe<Order>> GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var order = await _dbContextAccessor
+            .Get()
+            .Orders
+            .Include(o => o.Items)
+            .TagWithCallSite()
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+
+        if (order is null)
+            return Maybe.None;
+        return order;
     }
 }

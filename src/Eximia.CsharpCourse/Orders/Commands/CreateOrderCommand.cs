@@ -19,7 +19,7 @@ public record CreateOrderCommand : ICommand<Result<Order>>
 
     public static Result<CreateOrderCommand> Create(IEnumerable<ItemDto> items, PaymentMethodDto paymentMethod)
     {
-        var command = new CreateOrderCommand(items, paymentMethod);
+        CreateOrderCommand command = new(items, paymentMethod);
         var result = new Validator().Validate(command);
         if (result.IsValid)
             return command;

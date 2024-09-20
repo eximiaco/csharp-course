@@ -1,5 +1,6 @@
 ﻿using Eximia.CsharpCourse.API.Models.Requests;
 using Eximia.CsharpCourse.API.Models.Responses;
+using Eximia.CsharpCourse.Orders.Commands;
 using Eximia.CsharpCourse.Orders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,5 +42,19 @@ public class OrdersController : ControllerBase
         if (status.HasNoValue)
             return NotFound();
         return Ok(new { status = status.Value });
+    }
+
+    [HttpPatch("{id}/cancel")]
+    public async Task<IActionResult> CancelOrder(int id, CancellationToken cancellationToken)
+    {
+        var command = CancelOrderCommand.Create(id);
+        if (command.IsFailure)
+            return BadRequest(new ErrorResponse(command.Error));
+
+        var result = await _mediator.Send(command.Value, cancellationToken);
+        if (result.IsFailure)
+            return BadRequest(new ErrorResponse(result.Error));
+
+        return Ok();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eximia.CsharpCourse.Orders.DomainEvents;
+﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.Orders.DomainEvents;
 using Eximia.CsharpCourse.Orders.States;
 using Eximia.CsharpCourse.SeedWork;
 
@@ -23,7 +24,7 @@ public partial class Order : AggregateRoot<int>
         Date = date;
     }
 
-    public IOrderState State { get; } = null!;
+    public IOrderState State { get; private set; } = null!;
     public IEnumerable<Item> Items => _items;
     public PaymentMethodInfo PaymentMethod { get; } = null!;
     public DateTime Date { get; }
@@ -40,5 +41,15 @@ public partial class Order : AggregateRoot<int>
 
         order.AddDomainEvent(new OrderCreatedDomainEvent(order));
         return order;
+    }
+
+    public void ChangeState(IOrderState state)
+    {
+        State = state;
+    }
+
+    public Result Cancel()
+    {
+        return State.Cancel(this);
     }
 }
