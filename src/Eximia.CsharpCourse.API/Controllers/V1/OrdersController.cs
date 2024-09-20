@@ -1,5 +1,6 @@
 ﻿using Eximia.CsharpCourse.API.Models.Requests;
 using Eximia.CsharpCourse.API.Models.Responses;
+using Eximia.CsharpCourse.Orders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,8 +35,11 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id}/status")]
-    public async Task<IActionResult> GetOrderStatus(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetOrderStatus([FromServices] OrdersDataAccess ordersDataAccess, int id, CancellationToken cancellationToken)
     {
-        return Ok();
+        var status = await ordersDataAccess.GetStatusByIdAsync(id, cancellationToken);
+        if (status.HasNoValue)
+            return NotFound();
+        return Ok(new { status = status.Value });
     }
 }
