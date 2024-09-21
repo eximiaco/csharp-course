@@ -1,4 +1,5 @@
 ﻿using Eximia.CsharpCourse.Orders.Repository;
+using Eximia.CsharpCourse.Orders.States;
 using MediatR;
 
 namespace Eximia.CsharpCourse.Orders.Commands.Handlers;
@@ -14,7 +15,7 @@ public class ProcessOrdersPaymentsCommandHandler : IRequestHandler<ProcessOrders
 
     public async Task Handle(ProcessOrdersPaymentsCommand command, CancellationToken cancellationToken)
     {
-        var orders = await _ordersRepository.GetAllAwaitingProcessingAsync(cancellationToken).ConfigureAwait(false);
+        var orders = await _ordersRepository.GetAllByStateAsync(new AwaitingProcessingState(), cancellationToken).ConfigureAwait(false);
         foreach (var order in orders)
             order.ProcessPayment();
 

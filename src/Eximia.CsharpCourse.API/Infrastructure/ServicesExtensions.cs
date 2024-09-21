@@ -78,6 +78,9 @@ internal static class ServicesExtensions
             x.AddConsumer<ProcessPaymentConsumer>();
             x.AddConsumer<CompleteOrderPaymentConsumer>();
             x.AddConsumer<RefundOrderPaymentConsumer>();
+            x.AddConsumer<WaitForStockConsumer>();
+            x.AddConsumer<CompleteOrderConsumer>();
+            x.AddConsumer<WriteOffProductsFromStockConsumer>();
 
             x.UsingInMemory((context, cfg) =>
             {

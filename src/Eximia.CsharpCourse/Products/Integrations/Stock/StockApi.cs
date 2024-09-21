@@ -36,4 +36,22 @@ public class StockApi : IStockApi
         var result = await response.Result.GetJsonAsync<IEnumerable<StockResponse>>().WaitAsync(cancellationToken).ConfigureAwait(false);
         return Result.Success(result);
     }
+
+    public async Task<Result> WriteOffAsync(IEnumerable<int> productIds, CancellationToken cancellationToken)
+    {
+        var response = await HttpRetryPolicy.AsyncRetryPolicy.ExecuteAndCaptureAsync(async () =>
+        {
+            return await _settings.WriteOffUri
+                .WithHeader("x-api-key", _settings.ApiKey)
+                .PostJsonAsync(productIds, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+                .ConfigureAwait(false);
+        }).WaitAsync(cancellationToken).ConfigureAwait(false);
+
+        if (response.Outcome == OutcomeType.Failure)
+            return Result.Failure("Falha dando baixo dos itens no estoque.");
+
+        if (!response.Result.ResponseMessage.IsSuccessStatusCode)
+            return Result.Failure(await response.Result.ResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false));
+        return Result.Success();
+    }
 }

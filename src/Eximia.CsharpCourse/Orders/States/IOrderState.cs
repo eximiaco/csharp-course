@@ -9,4 +9,7 @@ public interface IOrderState
     Result Cancel(Order order);
     Result ProcessPayment(Order order);
     Result CompletePayment(Order order);
+    Result Separate(Order order);
+    Result WaitForStock(Order order);
+    Result Complete(Order order);
 }

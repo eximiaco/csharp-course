@@ -26,15 +26,14 @@ public class OrdersRepository : IOrdersRepository
             .ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<Order>> GetAllAwaitingProcessingAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Order>> GetAllByStateAsync(IOrderState state, CancellationToken cancellationToken)
     {
-        AwaitingProcessingState stateToFind = new();
         return await _dbContextAccessor
             .Get()
             .Orders
             .Include(o => o.Items)
             .TagWithCallSite()
-            .Where(o => o.State == stateToFind)
+            .Where(o => o.State == state)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
     }

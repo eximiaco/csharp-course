@@ -1,5 +1,6 @@
 ﻿using Eximia.CsharpCourse.Orders.Consumers;
 using Eximia.CsharpCourse.Payments.Consumers;
+using Eximia.CsharpCourse.Products.Consumers;
 using Eximia.CsharpCourse.SeedWork.Settings;
 using Eximia.CsharpCourse.Workers.Jobs;
 using Flurl.Http;
@@ -36,6 +37,7 @@ internal static class ServicesExtensions
         });
 
         services.AddHostedService<ProcessOrdersPaymentsJob>();
+        services.AddHostedService<SeparateOrdersJob>();
         return services;
     }
 
@@ -63,6 +65,9 @@ internal static class ServicesExtensions
             x.AddConsumer<ProcessPaymentConsumer>();
             x.AddConsumer<CompleteOrderPaymentConsumer>();
             x.AddConsumer<RefundOrderPaymentConsumer>();
+            x.AddConsumer<WaitForStockConsumer>();
+            x.AddConsumer<CompleteOrderConsumer>();
+            x.AddConsumer<WriteOffProductsFromStockConsumer>();
 
             x.UsingInMemory((context, cfg) =>
             {

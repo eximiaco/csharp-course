@@ -51,5 +51,8 @@ public partial class Order : AggregateRoot<int>
     public Result Cancel() => State.Cancel(this);
     public Result ProcessPayment() => State.ProcessPayment(this);
     public Result CompletePayment() => State.CompletePayment(this);
+    public Result Complete() => State.Complete(this);
+    public Result Separate() => State.Separate(this);
+    public Result WaitForStock() => State.WaitForStock(this);
     public void Refund() => PaymentMethod.Refund();
 }

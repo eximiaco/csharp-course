@@ -1,11 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using Eximia.CsharpCourse.Orders.DomainEvents;
 
 namespace Eximia.CsharpCourse.Orders.States;
 
-public class PaymentCompletedState : IOrderState
+public class SeparatingOrderState : IOrderState
 {
-    public string Name => "PaymentCompleted";
+    public string Name => "SeparatingOrder";
 
     public Result Cancel(Order order)
     {
@@ -17,21 +16,23 @@ public class PaymentCompletedState : IOrderState
     }
 
     public Result Complete(Order order)
-        => Result.Failure("Pedido já está pago.");
-
-    public Result CompletePayment(Order order)
-        => Result.Failure("Pedido já está pago.");
-
-    public Result ProcessPayment(Order order)
-        => Result.Failure("Pedido já está pago.");
-
-    public Result Separate(Order order)
     {
-        order.ChangeState(new SeparatingOrderState());
-        order.AddDomainEvent(new OrderIsBeingSeparatedDomainEvent(order));
+        order.ChangeState(new CompletedState());
         return Result.Success();
     }
 
+    public Result CompletePayment(Order order)
+        => Result.Failure("Pedido está em separação.");
+
+    public Result ProcessPayment(Order order)
+        => Result.Failure("Pedido está em separação.");
+
+    public Result Separate(Order order)
+        => Result.Failure("Pedido já está em separação.");
+
     public Result WaitForStock(Order order)
-        => Result.Failure("Pedido já está pago.");
+    {
+        order.ChangeState(new AwaitingForStockState());
+        return Result.Success();
+    }
 }

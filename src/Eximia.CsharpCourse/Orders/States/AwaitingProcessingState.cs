@@ -13,6 +13,9 @@ public class AwaitingProcessingState : IOrderState
         return Result.Success();
     }
 
+    public Result Complete(Order order)
+        => Result.Failure("Pedido está aguardando processamento.");
+
     public Result CompletePayment(Order order)
         => Result.Failure("Pedido está aguardando processamento.");
 
@@ -22,4 +25,10 @@ public class AwaitingProcessingState : IOrderState
         order.AddDomainEvent(new OrderIsProcessingPaymentDomainEvent(order));
         return Result.Success();
     }
+
+    public Result Separate(Order order)
+        => Result.Failure("Pedido está aguardando processamento.");
+
+    public Result WaitForStock(Order order)
+        => Result.Failure("Pedido está aguardando processamento.");
 }
