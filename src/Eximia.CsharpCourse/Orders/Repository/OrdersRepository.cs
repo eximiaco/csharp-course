@@ -51,4 +51,21 @@ public class OrdersRepository : IOrdersRepository
             return Maybe.None;
         return order;
     }
+
+    public async Task<IEnumerable<Order>> GetAllFromYesterdayReadOnlyAsync(CancellationToken cancellationToken)
+    {
+        var startDate = DateTime.UtcNow.AddDays(-1).Date;
+        var endDate = DateTime.UtcNow.Date.AddMilliseconds(-1);
+
+        return await _dbContextAccessor
+            .Get()
+            .Orders
+            .Include(o => o.Items)
+            .TagWithCallSite()
+            .AsNoTracking()
+            .Where(o => o.Date >= startDate && o.Date <= endDate)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+    }
 }

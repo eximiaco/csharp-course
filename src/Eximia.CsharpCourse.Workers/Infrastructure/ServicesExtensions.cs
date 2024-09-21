@@ -38,6 +38,7 @@ internal static class ServicesExtensions
 
         services.AddHostedService<ProcessOrdersPaymentsJob>();
         services.AddHostedService<SeparateOrdersJob>();
+        services.AddHostedService<GenerateYesterdayOrdersReportJob>();
         return services;
     }
 
