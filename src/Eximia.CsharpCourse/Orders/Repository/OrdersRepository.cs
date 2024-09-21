@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.Orders.States;
 using Eximia.CsharpCourse.SeedWork;
 using Eximia.CsharpCourse.SeedWork.EFCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,19 @@ public class OrdersRepository : IOrdersRepository
             .Get()
             .Orders
             .AddAsync(order, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<IEnumerable<Order>> GetAllAwaitingProcessingAsync(CancellationToken cancellationToken)
+    {
+        AwaitingProcessingState stateToFind = new();
+        return await _dbContextAccessor
+            .Get()
+            .Orders
+            .Include(o => o.Items)
+            .TagWithCallSite()
+            .Where(o => o.State == stateToFind)
+            .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
     }
 

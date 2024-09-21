@@ -8,11 +8,11 @@ using Polly;
 
 namespace Eximia.CsharpCourse.Products.Integrations.Stock;
 
-public class StockService : IStockService
+public class StockApi : IStockApi
 {
     private readonly StockApiSettings _settings;
 
-    public StockService(IOptions<StockApiSettings> settings)
+    public StockApi(IOptions<StockApiSettings> settings)
     {
         _settings = settings.Value;
     }

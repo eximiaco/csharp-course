@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Eximia.CsharpCourse.SeedWork;
+using FluentValidation;
 
 namespace Eximia.CsharpCourse.Orders.Commands.Dtos;
 

@@ -1,4 +1,6 @@
 ﻿using Eximia.CsharpCourse.API.Infrastructure.Filters;
+using Eximia.CsharpCourse.Orders.Consumers;
+using Eximia.CsharpCourse.Payments.Consumers;
 using Eximia.CsharpCourse.SeedWork.Settings;
 using Flurl.Http;
 using MassTransit;
@@ -58,18 +60,6 @@ internal static class ServicesExtensions
         return services;
     }
 
-    internal static IServiceCollection AddVersioning(this IServiceCollection services)
-    {
-        services.AddApiVersioning(config =>
-        {
-            config.DefaultApiVersion = new ApiVersion(1, 0);
-            config.AssumeDefaultVersionWhenUnspecified = true;
-            config.ReportApiVersions = true;
-        });
-
-        return services;
-    }
-
     internal static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
@@ -85,6 +75,10 @@ internal static class ServicesExtensions
     {
         services.AddMassTransit(x =>
         {
+            x.AddConsumer<ProcessPaymentConsumer>();
+            x.AddConsumer<CompleteOrderPaymentConsumer>();
+            x.AddConsumer<RefundOrderPaymentConsumer>();
+
             x.UsingInMemory((context, cfg) =>
             {
                 cfg.ConfigureEndpoints(context);

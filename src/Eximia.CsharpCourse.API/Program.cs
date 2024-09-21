@@ -17,7 +17,6 @@ builder.Services
     .ConfigureFlurl()
     .AddHealth(builder.Configuration)
     .RemoveModelValidation()
-    .AddVersioning()
     .AddSwagger()
     .AddBus()
     .AddControllersWithFilter();

@@ -1,3 +1,5 @@
-﻿namespace Eximia.CsharpCourse.Products.Discounts;
+﻿using Eximia.CsharpCourse.SeedWork;
 
-public readonly record struct DiscountStrategyContext(int Quantity, DateTime OrderDate, decimal Amount);
+namespace Eximia.CsharpCourse.Products.Discounts;
+
+public readonly record struct DiscountStrategyContext(int Quantity, DateTime OrderDate, decimal Amount, EPaymentMethod PaymentMethod);

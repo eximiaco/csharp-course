@@ -14,6 +14,7 @@ public class OrdersEFMap : IEntityTypeConfiguration<Orders>
         builder.Property(o => o.Status).HasColumnType("varchar(50)").IsRequired();
         builder.Property(o => o.PaymentMethod).HasColumnType("varchar(20)").IsRequired();
         builder.Property(o => o.PaymentMethodInstallments).HasColumnType("int").IsRequired(false);
+        builder.Property(o => o.PaymentMethodWasRefunded).HasColumnType("bit").IsRequired();
         builder.Property(o => o.Date).HasColumnType("datetime").IsRequired();
     }
 }

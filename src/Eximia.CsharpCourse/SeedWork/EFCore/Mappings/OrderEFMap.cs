@@ -13,7 +13,8 @@ public class OrderEFMap : IEntityTypeConfiguration<Order>
         builder.ToTable("Orders");
         builder.HasKey(o => o.Id);
 
-        builder.Property(o => o.Date)
+        builder
+            .Property(o => o.Date)
             .HasColumnType("datetime")
             .HasConversion(new DateTimeUtcConverter())
             .IsRequired();
@@ -28,6 +29,7 @@ public class OrderEFMap : IEntityTypeConfiguration<Order>
                 .IsRequired();
 
             paymentMethod.Property(p => p.Installments).HasColumnName("PaymentMethodInstallments").HasColumnType("int").IsRequired(false);
+            paymentMethod.Property(p => p.WasRefunded).HasColumnName("PaymentMethodWasRefunded").HasColumnType("bit").IsRequired();
         });
 
         builder

@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Eximia.CsharpCourse.API.Controllers.V1;
 
-[Route("api/v{version:apiVersion}/[controller]")]
-[ApiVersion("1")]
+[Route("api/[controller]")]
 [ApiController]
-
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;

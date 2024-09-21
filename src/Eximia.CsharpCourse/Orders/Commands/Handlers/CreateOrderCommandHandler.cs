@@ -12,13 +12,13 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
 {
     private readonly IOrdersRepository _ordersRepository;
     private readonly IProductsRepository _productsRepository;
-    private readonly IStockService _stockService;
+    private readonly IStockApi _stockService;
     private readonly ICalculateOrderValueDomainService _calculateOrderValueDomainService;
 
     public CreateOrderCommandHandler(
         IOrdersRepository ordersRepository,
         IProductsRepository productsRepository,
-        IStockService stockService,
+        IStockApi stockService,
         ICalculateOrderValueDomainService calculateOrderValueDomainService)
     {
         _ordersRepository = ordersRepository;
@@ -29,11 +29,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
 
     public async Task<Result<Order>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var aa = new SeasonalDiscountStrategy(new Dictionary<DateTime, decimal>
-        {
-            { DateTime.Now, 20 },
-            { DateTime.Now, 20 }
-        }).ToNameTypeJson();
+        var aa = new PixPaymentMethodDiscountStrategy(5).ToNameTypeJson();
 
         var productIds = command.Items.Select(i => i.ProductId);
         var products = await _productsRepository.GetByIdsReadOnlyAsync(productIds, cancellationToken).ConfigureAwait(false);
@@ -48,11 +44,13 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
 
         var order = Order.Create(
             items: command.Items.Select(i => new Order.Item(i.Amount, i.Quantity, i.ProductId)).ToList(),
-            paymentMethod: new Order.PaymentMethodInfo(command.PaymentMethod.Method, command.PaymentMethod.Installments));
+            paymentMethod: Order.PaymentMethodInfo.Create(command.PaymentMethod.Method, command.PaymentMethod.Installments));
+        if (order.IsFailure)
+            return order;
 
-        _calculateOrderValueDomainService.Calculate(order, products);
+        _calculateOrderValueDomainService.Calculate(order.Value, products);
 
-        await _ordersRepository.AddAsync(order, cancellationToken).ConfigureAwait(false);
+        await _ordersRepository.AddAsync(order.Value, cancellationToken).ConfigureAwait(false);
         await _ordersRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken).ConfigureAwait(false);
         return order;
     }

@@ -13,7 +13,7 @@ public class CalculateOrderValueDomainService : ICalculateOrderValueDomainServic
             if (product is null)
                 continue;
 
-            var discount = product.CalculateDiscount(new DiscountStrategyContext(item.Quantity, order.Date, item.Amount));
+            var discount = product.CalculateDiscount(new DiscountStrategyContext(item.Quantity, order.Date, item.Amount, order.PaymentMethod.Method));
             item.ApplyDiscount(discount);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Eximia.CsharpCourse.Orders;
+using Eximia.CsharpCourse.Payments;
 using Eximia.CsharpCourse.Products;
 using Eximia.CsharpCourse.SeedWork.EFCore.Mappings;
 using Eximia.CsharpCourse.SeedWork.Extensions;
@@ -18,6 +19,7 @@ public class EximiaCsharpCourseDbContext : DbContext, IUnitOfWork
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
@@ -31,5 +33,6 @@ public class EximiaCsharpCourseDbContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new ProductEFMap());
         modelBuilder.ApplyConfiguration(new OrderEFMap());
         modelBuilder.ApplyConfiguration(new OrderItemEFMap());
+        modelBuilder.ApplyConfiguration(new PaymentEFMap());
     }
 }

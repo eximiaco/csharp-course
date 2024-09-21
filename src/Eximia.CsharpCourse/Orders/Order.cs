@@ -26,12 +26,16 @@ public partial class Order : AggregateRoot<int>
 
     public IOrderState State { get; private set; } = null!;
     public IEnumerable<Item> Items => _items;
-    public PaymentMethodInfo PaymentMethod { get; } = null!;
+    public PaymentMethodInfo PaymentMethod { get; private set; } = null!;
     public DateTime Date { get; }
-    public decimal Amount => _items.Sum(i => i.Amount); 
+    public decimal Amount => _items.Sum(i => i.Amount);
+    public string StateName => State.Name;
 
-    public static Order Create(ICollection<Item> items, PaymentMethodInfo paymentMethod)
+    public static Result<Order> Create(ICollection<Item> items, PaymentMethodInfo paymentMethod)
     {
+        if (paymentMethod.Method == EPaymentMethod.CreditCard && paymentMethod.Installments > 12)
+            return Result.Failure<Order>("Não é possível parcelar em mais de 12x.");
+
         var order = new Order(
             id: 0,
             state: new AwaitingProcessingState(),
@@ -43,13 +47,9 @@ public partial class Order : AggregateRoot<int>
         return order;
     }
 
-    public void ChangeState(IOrderState state)
-    {
-        State = state;
-    }
-
-    public Result Cancel()
-    {
-        return State.Cancel(this);
-    }
+    public void ChangeState(IOrderState state) => State = state;
+    public Result Cancel() => State.Cancel(this);
+    public Result ProcessPayment() => State.ProcessPayment(this);
+    public Result CompletePayment() => State.CompletePayment(this);
+    public void Refund() => PaymentMethod.Refund();
 }

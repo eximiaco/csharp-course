@@ -18,5 +18,6 @@ public class EximiaCsharpCourseContext : DbContext
         modelBuilder.ApplyConfiguration(new ProductsEFMap());
         modelBuilder.ApplyConfiguration(new OrdersEFMap());
         modelBuilder.ApplyConfiguration(new OrderItemsEFMap());
+        modelBuilder.ApplyConfiguration(new PaymentsEFMap());
     }
 }

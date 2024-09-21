@@ -6,5 +6,6 @@ public record Orders
     public string Status { get; set; } = string.Empty;
     public string PaymentMethod { get; set; } = string.Empty;
     public int? PaymentMethodInstallments { get; set; }
+    public bool PaymentMethodWasRefunded { get; set; }
     public DateTime Date { get; set; }
 }

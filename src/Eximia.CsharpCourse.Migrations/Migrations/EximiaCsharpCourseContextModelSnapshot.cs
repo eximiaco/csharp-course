@@ -69,6 +69,9 @@ namespace Eximia.CsharpCourse.Migrations.Migrations
                     b.Property<int?>("PaymentMethodInstallments")
                         .HasColumnType("int");
 
+                    b.Property<bool>("PaymentMethodWasRefunded")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -76,6 +79,44 @@ namespace Eximia.CsharpCourse.Migrations.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Orders", (string)null);
+                });
+
+            modelBuilder.Entity("Eximia.CsharpCourse.Migrations.Models.Payments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(15,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int?>("Installments")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("WasRefund")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Eximia.CsharpCourse.Migrations.Models.Products", b =>
@@ -116,6 +157,17 @@ namespace Eximia.CsharpCourse.Migrations.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Eximia.CsharpCourse.Migrations.Models.Payments", b =>
+                {
+                    b.HasOne("Eximia.CsharpCourse.Migrations.Models.Orders", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse", "Exim
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{A275E07D-7193-4C21-88F0-0547941D851D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse.Migrations", "Eximia.CsharpCourse.Migrations\Eximia.CsharpCourse.Migrations.csproj", "{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse.Migrations", "Eximia.CsharpCourse.Migrations\Eximia.CsharpCourse.Migrations.csproj", "{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse.Workers", "Eximia.CsharpCourse.Workers\Eximia.CsharpCourse.Workers.csproj", "{13013CED-8BFD-40E4-90D9-01FD69F08172}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,17 @@ Global
 		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0ECA81CD-7FEE-4637-A3E3-8DF8BFB7BCC5} = {A275E07D-7193-4C21-88F0-0547941D851D}
+		{13013CED-8BFD-40E4-90D9-01FD69F08172} = {A275E07D-7193-4C21-88F0-0547941D851D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CC0463E3-C87C-49D3-995F-4142D70784A8}
