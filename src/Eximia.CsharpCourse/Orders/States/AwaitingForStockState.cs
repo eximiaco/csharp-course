@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.Orders.DomainEvents;
 
 namespace Eximia.CsharpCourse.Orders.States;
 
@@ -12,6 +13,7 @@ public class AwaitingForStockState : IOrderState
             return Result.Failure("Cancelamento não permitido pois o pedido está aguardando estoque.");
 
         order.ChangeState(new CanceledState());
+        order.AddDomainEvent(new OrderCanceledDomainEvent(order));
         return Result.Success();
     }
 
@@ -26,8 +28,9 @@ public class AwaitingForStockState : IOrderState
 
     public Result Separate(Order order)
     {
-        // Gatilho foi disparado e, após ter estoque, vai para separação novamente
+        // Algum gatilho foi disparado e, após ter estoque, vai para separação novamente
         order.ChangeState(new SeparatingOrderState());
+        order.AddDomainEvent(new OrderIsBeingSeparatedDomainEvent(order));
         return Result.Success();
     }
 

@@ -1,6 +1,7 @@
 ﻿using Eximia.CsharpCourse.API.Infrastructure.Filters;
 using Eximia.CsharpCourse.Orders.Consumers;
 using Eximia.CsharpCourse.Payments.Consumers;
+using Eximia.CsharpCourse.Products.Consumers;
 using Eximia.CsharpCourse.SeedWork.Settings;
 using Flurl.Http;
 using MassTransit;

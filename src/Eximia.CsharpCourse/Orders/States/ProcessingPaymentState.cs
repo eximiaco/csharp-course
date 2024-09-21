@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.Orders.DomainEvents;
 
 namespace Eximia.CsharpCourse.Orders.States;
 
@@ -15,6 +16,7 @@ public class ProcessingPaymentState : IOrderState
     public Result CompletePayment(Order order)
     {
         order.ChangeState(new PaymentCompletedState());
+        order.AddDomainEvent(new OrderCompletedDomainEvent(order));
         return Result.Success();
     }
 

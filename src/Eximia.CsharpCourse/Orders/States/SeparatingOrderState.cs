@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.Orders.DomainEvents;
 
 namespace Eximia.CsharpCourse.Orders.States;
 
@@ -12,6 +13,7 @@ public class SeparatingOrderState : IOrderState
             return Result.Failure("Cancelamento não permitido pois o pedido já está pago.");
 
         order.ChangeState(new CanceledState());
+        order.AddDomainEvent(new OrderCanceledDomainEvent(order));
         return Result.Success();
     }
 
@@ -33,6 +35,7 @@ public class SeparatingOrderState : IOrderState
     public Result WaitForStock(Order order)
     {
         order.ChangeState(new AwaitingForStockState());
+        order.AddDomainEvent(new OrderIsAwaitingForStockDomainEvent(order));
         return Result.Success();
     }
 }

@@ -13,6 +13,7 @@ public class PaymentCompletedState : IOrderState
             return Result.Failure("Cancelamento não permitido pois o pedido já está pago.");
 
         order.ChangeState(new CanceledState());
+        order.AddDomainEvent(new OrderCanceledDomainEvent(order));
         return Result.Success();
     }
 
