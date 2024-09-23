@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Eximia.CsharpCourse.Migrations\Eximia.CsharpCourse.Migrations.csproj" />
     <ProjectReference Include="..\Eximia.CsharpCourse\Eximia.CsharpCourse.csproj" />
   </ItemGroup>
 

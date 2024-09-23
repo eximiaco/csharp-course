@@ -20,7 +20,7 @@ builder.Services
     .AddSwagger()
     .AddBus()
     .AddControllersWithFilter();
-
+    
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
@@ -42,3 +42,7 @@ app.UseHealthChecks("/health-check");
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
+
+public partial class Program
+{
+}

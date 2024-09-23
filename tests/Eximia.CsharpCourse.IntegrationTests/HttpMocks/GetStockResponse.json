@@ -1,0 +1,16 @@
+﻿{
+	"request": {
+		"method": "POST",
+		"route": ""
+	},
+	"response": {
+		"status": "ok",
+		"body": 
+			[
+				{
+					"ProductId": 0,
+					"HasStock" :  true
+				}
+			]
+	}
+}

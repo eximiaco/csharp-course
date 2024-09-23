@@ -11,7 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{A275E0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse.Migrations", "Eximia.CsharpCourse.Migrations\Eximia.CsharpCourse.Migrations.csproj", "{BAC1E1C4-F3A0-4250-AAE6-599FE2797F19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse.Workers", "Eximia.CsharpCourse.Workers\Eximia.CsharpCourse.Workers.csproj", "{13013CED-8BFD-40E4-90D9-01FD69F08172}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse.Workers", "Eximia.CsharpCourse.Workers\Eximia.CsharpCourse.Workers.csproj", "{13013CED-8BFD-40E4-90D9-01FD69F08172}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E7A17231-D06D-4074-BF26-E1C1A12A1F42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eximia.CsharpCourse.UnitTests", "..\tests\Eximia.CsharpCourse.UnitTests\Eximia.CsharpCourse.UnitTests.csproj", "{46DCBB2E-FF7E-493A-9DA9-4A2CED97FD98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eximia.CsharpCourse.IntegrationTests", "..\tests\Eximia.CsharpCourse.IntegrationTests\Eximia.CsharpCourse.IntegrationTests.csproj", "{4C8FADE0-E1FF-47E3-BB7C-5B68F7F0D33B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +41,14 @@ Global
 		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13013CED-8BFD-40E4-90D9-01FD69F08172}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46DCBB2E-FF7E-493A-9DA9-4A2CED97FD98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46DCBB2E-FF7E-493A-9DA9-4A2CED97FD98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46DCBB2E-FF7E-493A-9DA9-4A2CED97FD98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46DCBB2E-FF7E-493A-9DA9-4A2CED97FD98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C8FADE0-E1FF-47E3-BB7C-5B68F7F0D33B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C8FADE0-E1FF-47E3-BB7C-5B68F7F0D33B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C8FADE0-E1FF-47E3-BB7C-5B68F7F0D33B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C8FADE0-E1FF-47E3-BB7C-5B68F7F0D33B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +56,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0ECA81CD-7FEE-4637-A3E3-8DF8BFB7BCC5} = {A275E07D-7193-4C21-88F0-0547941D851D}
 		{13013CED-8BFD-40E4-90D9-01FD69F08172} = {A275E07D-7193-4C21-88F0-0547941D851D}
+		{46DCBB2E-FF7E-493A-9DA9-4A2CED97FD98} = {E7A17231-D06D-4074-BF26-E1C1A12A1F42}
+		{4C8FADE0-E1FF-47E3-BB7C-5B68F7F0D33B} = {E7A17231-D06D-4074-BF26-E1C1A12A1F42}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CC0463E3-C87C-49D3-995F-4142D70784A8}

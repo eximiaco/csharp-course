@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
 namespace Eximia.CsharpCourse.Migrations;
@@ -14,7 +14,7 @@ public class MigrationsDbContextFactory : IDesignTimeDbContextFactory<EximiaCsha
         return Create(connectionString);
     }
 
-    private EximiaCsharpCourseContext Create(string connectionString)
+    public EximiaCsharpCourseContext Create(string connectionString)
     {
         if (string.IsNullOrEmpty(connectionString))
             throw new ArgumentException($"{nameof(connectionString)} is null or empty.", nameof(connectionString));
