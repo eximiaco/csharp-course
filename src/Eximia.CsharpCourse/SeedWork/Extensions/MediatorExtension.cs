@@ -9,7 +9,8 @@ public static class MediatorExtension
     {
         var domainEntities = ctx.ChangeTracker
             .Entries<IAggregateRoot>()
-            .Where(x => x.Entity?.DomainEvents?.Any() == true);
+            .Where(x => x.Entity?.DomainEvents?.Any() == true)
+            .ToList();
 
         if (!domainEntities.Any())
             return;

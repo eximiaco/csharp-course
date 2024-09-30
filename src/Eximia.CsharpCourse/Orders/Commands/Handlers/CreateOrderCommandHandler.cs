@@ -29,12 +29,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
 
     public async Task<Result<Order>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var aa = new PixPaymentMethodDiscountStrategy(5).ToNameTypeJson();
-
         var productIds = command.Items.Select(i => i.ProductId);
         var products = await _productsRepository.GetByIdsReadOnlyAsync(productIds, cancellationToken).ConfigureAwait(false);
-        if (products.Count() != productIds.Count())
-            return Result.Failure<Order>("os produtos informados são inválidos.");
 
         var productsStock = await _stockService.CheckProductStock(productIds, cancellationToken).ConfigureAwait(false);
         if (productsStock.IsFailure)
