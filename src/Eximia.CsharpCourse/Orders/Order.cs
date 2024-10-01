@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
-using Eximia.CsharpCourse.Orders.DomainEvents;
+using Eximia.CsharpCourse.Orders.CreateOrder;
 using Eximia.CsharpCourse.Orders.States;
+using Eximia.CsharpCourse.Payments;
 using Eximia.CsharpCourse.SeedWork;
 
 namespace Eximia.CsharpCourse.Orders;
@@ -47,12 +48,38 @@ public partial class Order : AggregateRoot<int>
         return order;
     }
 
-    public void ChangeState(IOrderState state) => State = state;
-    public Result Cancel() => State.Cancel(this);
-    public Result ProcessPayment() => State.ProcessPayment(this);
-    public Result CompletePayment() => State.CompletePayment(this);
-    public Result Complete() => State.Complete(this);
-    public Result Separate() => State.Separate(this);
-    public Result WaitForStock() => State.WaitForStock(this);
-    public void Refund() => PaymentMethod.Refund();
+    public void PaymentApproved(Payment payment)
+    {
+        State.CompletePayment(this, payment);
+        AddDomainEvent(new OrderCompletedDomainEvent(this));
+    }
+
+    public void PaymentDenied()
+    {
+        State.Cancel(this);
+        AddDomainEvent(new OrderCanceledDomainEvent(this));
+    }
+
+    public void ProcessPayment()
+    {
+        State.ProcessPayment(this);
+    }
+    
+    public void Cancel()
+    {
+        State.Cancel(this);
+        AddDomainEvent(new OrderCanceledDomainEvent(this));
+    }
+    
+    public void Refund()
+    {
+        Cancel();
+        PaymentMethod.Refund();
+    }
+    
+    public bool CanRefund() => !PaymentMethod.WasRefunded;
+    
+    internal void ChangeState(IOrderState newState) => State = newState;
+
+    
 }

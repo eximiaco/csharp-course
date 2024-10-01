@@ -1,5 +1,4 @@
-﻿using Eximia.CsharpCourse.Products;
-using Eximia.CsharpCourse.SeedWork;
+﻿using Eximia.CsharpCourse.SeedWork;
 
 namespace Eximia.CsharpCourse.Orders.DomainServices.CalculateOrderValue;
 

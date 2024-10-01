@@ -1,5 +1,3 @@
-﻿using MediatR;
+﻿namespace Eximia.CsharpCourse.SeedWork;
 
-namespace Eximia.CsharpCourse.SeedWork;
-
-public interface IDomainEvent : INotification { }
+public interface IDomainEvent{ }

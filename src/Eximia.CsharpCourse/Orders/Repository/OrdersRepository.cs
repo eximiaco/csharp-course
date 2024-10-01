@@ -6,20 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Eximia.CsharpCourse.Orders.Repository;
 
-public class OrdersRepository : IOrdersRepository
+public class OrdersRepository(IEFDbContextAccessor<EximiaCsharpCourseDbContext> dbContextAccessor)
+    : IOrdersRepository
 {
-    private readonly IEFDbContextAccessor<EximiaCsharpCourseDbContext> _dbContextAccessor;
-
-    public OrdersRepository(IEFDbContextAccessor<EximiaCsharpCourseDbContext> dbContextAccessor)
-    {
-        _dbContextAccessor = dbContextAccessor;
-    }
-
-    public IUnitOfWork UnitOfWork => _dbContextAccessor.Get();
+    public IUnitOfWork UnitOfWork => dbContextAccessor.Get();
 
     public async Task AddAsync(Order order, CancellationToken cancellationToken)
     {
-        await _dbContextAccessor
+        await dbContextAccessor
             .Get()
             .Orders
             .AddAsync(order, cancellationToken)
@@ -28,7 +22,7 @@ public class OrdersRepository : IOrdersRepository
 
     public async Task<IEnumerable<Order>> GetAllByStateAsync(IOrderState state, CancellationToken cancellationToken)
     {
-        return await _dbContextAccessor
+        return await dbContextAccessor
             .Get()
             .Orders
             .Include(o => o.Items)
@@ -40,7 +34,7 @@ public class OrdersRepository : IOrdersRepository
 
     public async Task<Maybe<Order>> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var order = await _dbContextAccessor
+        var order = await dbContextAccessor
             .Get()
             .Orders
             .Include(o => o.Items)
@@ -57,7 +51,7 @@ public class OrdersRepository : IOrdersRepository
         var startDate = DateTime.UtcNow.AddDays(-1).Date;
         var endDate = DateTime.UtcNow.Date.AddMilliseconds(-1);
 
-        return await _dbContextAccessor
+        return await dbContextAccessor
             .Get()
             .Orders
             .Include(o => o.Items)
@@ -67,5 +61,29 @@ public class OrdersRepository : IOrdersRepository
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
+    }
+
+    public async Task<IEnumerable<Order>> GetAllWaitingPayment(CancellationToken cancellationToken)
+    {
+        return await dbContextAccessor
+            .Get()
+            .Orders
+            .Include(o => o.Items)
+            .TagWithCallSite()
+            .Where(o => o.State == new AwaitingProcessingState())
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<IEnumerable<Product>> GetProductsById(IEnumerable<int> ids, CancellationToken cancellationToken)
+    {
+        return await dbContextAccessor
+            .Get()
+            .Products
+            .TagWithCallSite()
+            .AsNoTracking()
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 }

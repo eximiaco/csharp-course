@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Eximia.CsharpCourse.Orders.DomainEvents;
+using Eximia.CsharpCourse.Payments;
 
 namespace Eximia.CsharpCourse.Orders.States;
 
@@ -16,19 +16,12 @@ public class AwaitingProcessingState : IOrderState
     public Result Complete(Order order)
         => Result.Failure("Pedido está aguardando processamento.");
 
-    public Result CompletePayment(Order order)
+    public Result CompletePayment(Order order, Payment payment)
         => Result.Failure("Pedido está aguardando processamento.");
 
     public Result ProcessPayment(Order order)
     {
         order.ChangeState(new ProcessingPaymentState());
-        order.AddDomainEvent(new OrderIsProcessingPaymentDomainEvent(order));
         return Result.Success();
     }
-
-    public Result Separate(Order order)
-        => Result.Failure("Pedido está aguardando processamento.");
-
-    public Result WaitForStock(Order order)
-        => Result.Failure("Pedido está aguardando processamento.");
 }

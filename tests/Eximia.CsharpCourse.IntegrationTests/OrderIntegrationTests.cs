@@ -1,12 +1,11 @@
 using Eximia.CsharpCourse.API.Models.Requests;
-using Eximia.CsharpCourse.Products;
-using Eximia.CsharpCourse.Products.Discounts;
 using Eximia.CsharpCourse.SeedWork.EFCore;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using System.Text.Json;
+using Eximia.CsharpCourse.Orders;
 using static Eximia.CsharpCourse.API.Models.Requests.CreateOrderRequest;
 
 namespace Eximia.CsharpCourse.IntegrationTests;

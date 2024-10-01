@@ -1,8 +1,9 @@
+using Eximia.CsharpCourse.Orders.CreateOrder;
+
 namespace Eximia.CsharpCourse.UnitTests;
 
 using Bogus;
 using Eximia.CsharpCourse.Orders;
-using Eximia.CsharpCourse.Orders.DomainEvents;
 using FluentAssertions;
 using static Eximia.CsharpCourse.Orders.Order;
 

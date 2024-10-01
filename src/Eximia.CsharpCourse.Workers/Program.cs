@@ -1,6 +1,6 @@
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
-using Eximia.CsharpCourse.API.Infrastructure;
+using Eximia.CsharpCourse.Workers.Infrastructure;
 using Eximia.CsharpCourse.Workers.Infrastructure.AutofacModules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,6 @@ builder
 builder.Services
     .AddHealth(builder.Configuration)
     .AddCustomOptions(builder.Configuration)
-    .AddBus()
     .AddWorkersServices()
     .AddControllers();
 
@@ -24,12 +23,12 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     containerBuilder.RegisterModule(new ApplicationModule());
     containerBuilder.RegisterModule(new InfrastructureModule());
-    containerBuilder.RegisterModule(new MediatorModule());
 });
 
 var app = builder.Build();
 
 app.UseHealthChecks("/health-check");
 app.UseHttpsRedirection();
+app.UseUnitOfWork();
 app.MapControllers();
 app.Run();

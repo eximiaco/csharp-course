@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.Payments;
 
 namespace Eximia.CsharpCourse.Orders.States;
 
@@ -8,8 +9,6 @@ public interface IOrderState
 
     Result Cancel(Order order);
     Result ProcessPayment(Order order);
-    Result CompletePayment(Order order);
-    Result Separate(Order order);
-    Result WaitForStock(Order order);
+    Result CompletePayment(Order order, Payment payment);
     Result Complete(Order order);
 }

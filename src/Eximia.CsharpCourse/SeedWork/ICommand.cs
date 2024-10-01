@@ -1,6 +1,5 @@
-﻿using MediatR;
+﻿namespace Eximia.CsharpCourse.SeedWork;
 
-namespace Eximia.CsharpCourse.SeedWork;
+public interface ICommand<TResult> { }
 
-public interface ICommand<TResult> : IRequest<TResult> { }
-public interface ICommand : IRequest { }
+public interface ICommand { }

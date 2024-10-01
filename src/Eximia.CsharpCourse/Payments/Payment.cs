@@ -1,5 +1,4 @@
-﻿using Eximia.CsharpCourse.Payments.DomainEvents;
-using Eximia.CsharpCourse.SeedWork;
+﻿using Eximia.CsharpCourse.SeedWork;
 
 namespace Eximia.CsharpCourse.Payments;
 
@@ -15,7 +14,8 @@ public class Payment : AggregateRoot<int>
         int? installments,
         EPaymentMethod method,
         string externalId,
-        bool wasRefund) : base(id)
+        bool wasRefund,
+        EPaymentStatus status) : base(id)
     {
         Amount = amount;
         CreatedAt = createdAt;
@@ -24,6 +24,7 @@ public class Payment : AggregateRoot<int>
         Method = method;
         ExternalId = externalId;
         WasRefund = wasRefund;
+        Status = status;
     }
 
     public decimal Amount { get; }
@@ -33,19 +34,15 @@ public class Payment : AggregateRoot<int>
     public EPaymentMethod Method { get; }
     public string ExternalId { get; private set; } = string.Empty;
     public bool WasRefund { get; private set; }
-
+    public EPaymentStatus Status { get;  }
+    
     public static Payment Create(decimal amount, int orderId, int? installments, EPaymentMethod method)
-        => new Payment(id: 0, amount, DateTime.UtcNow, orderId, installments, method, externalId: null!, wasRefund: false);
+        => new Payment(id: 0, amount, DateTime.UtcNow, orderId, installments, method, externalId: null!, 
+            wasRefund: false, EPaymentStatus.Pending);
 
     public void RegisterPayment(string externalId)
     {
         ExternalId = externalId;
-        AddDomainEvent(new PaymentRegisteredDomainEvent(this));
-    }
-
-    public void Refund()
-    {
-        WasRefund = true;
-        AddDomainEvent(new PaymentRefundedDomainEvent(this));
+       
     }
 }

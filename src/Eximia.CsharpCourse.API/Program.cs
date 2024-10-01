@@ -18,7 +18,6 @@ builder.Services
     .AddHealth(builder.Configuration)
     .RemoveModelValidation()
     .AddSwagger()
-    .AddBus()
     .AddControllersWithFilter();
     
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -26,7 +25,6 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     containerBuilder.RegisterModule(new ApplicationModule());
     containerBuilder.RegisterModule(new InfrastructureModule());
-    containerBuilder.RegisterModule(new MediatorModule());
 });
 
 var app = builder.Build();
@@ -40,6 +38,7 @@ if (!app.Environment.IsProduction())
 
 app.UseHealthChecks("/health-check");
 app.UseHttpsRedirection();
+app.UseUnitOfWork();
 app.MapControllers();
 app.Run();
 

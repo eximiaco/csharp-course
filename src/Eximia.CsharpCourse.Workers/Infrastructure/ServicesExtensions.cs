@@ -1,14 +1,10 @@
-﻿using Eximia.CsharpCourse.Orders.Consumers;
-using Eximia.CsharpCourse.Payments.Consumers;
-using Eximia.CsharpCourse.Products.Consumers;
-using Eximia.CsharpCourse.SeedWork.Settings;
+﻿using Eximia.CsharpCourse.SeedWork.Settings;
 using Eximia.CsharpCourse.Workers.Jobs;
 using Flurl.Http;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Eximia.CsharpCourse.API.Infrastructure;
+namespace Eximia.CsharpCourse.Workers.Infrastructure;
 
 internal static class ServicesExtensions
 {
@@ -37,8 +33,6 @@ internal static class ServicesExtensions
         });
 
         services.AddHostedService<ProcessOrdersPaymentsJob>();
-        services.AddHostedService<SeparateOrdersJob>();
-        services.AddHostedService<GenerateYesterdayOrdersReportJob>();
         return services;
     }
 
@@ -54,26 +48,6 @@ internal static class ServicesExtensions
         services.Configure<ApiBehaviorOptions>(opt =>
         {
             opt.SuppressModelStateInvalidFilter = true;
-        });
-
-        return services;
-    }
-
-    internal static IServiceCollection AddBus(this IServiceCollection services)
-    {
-        services.AddMassTransit(x =>
-        {
-            x.AddConsumer<ProcessPaymentConsumer>();
-            x.AddConsumer<CompleteOrderPaymentConsumer>();
-            x.AddConsumer<RefundOrderPaymentConsumer>();
-            x.AddConsumer<WaitForStockConsumer>();
-            x.AddConsumer<CompleteOrderConsumer>();
-            x.AddConsumer<WriteOffProductsFromStockConsumer>();
-
-            x.UsingInMemory((context, cfg) =>
-            {
-                cfg.ConfigureEndpoints(context);
-            });
         });
 
         return services;

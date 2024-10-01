@@ -1,6 +1,4 @@
-﻿using Eximia.CsharpCourse.Products;
-using Eximia.CsharpCourse.Products.Discounts;
-
+﻿
 namespace Eximia.CsharpCourse.Orders.DomainServices.CalculateOrderValue;
 
 public class CalculateOrderValueDomainService : ICalculateOrderValueDomainService

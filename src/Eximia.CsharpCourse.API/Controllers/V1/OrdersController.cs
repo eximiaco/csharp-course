@@ -1,8 +1,8 @@
 ﻿using Eximia.CsharpCourse.API.Models.Requests;
 using Eximia.CsharpCourse.API.Models.Responses;
 using Eximia.CsharpCourse.Orders.Commands;
+using Eximia.CsharpCourse.Orders.CreateOrder;
 using Eximia.CsharpCourse.Orders.Queries;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eximia.CsharpCourse.API.Controllers.V1;
@@ -11,21 +11,17 @@ namespace Eximia.CsharpCourse.API.Controllers.V1;
 [ApiController]
 public class OrdersController : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public OrdersController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateOrder(
+        [FromServices] CreateOrderCommandHandler handler,
+        [FromBody] CreateOrderRequest request, 
+        CancellationToken cancellationToken)
     {
         var command = request.CreateCommand();
         if (command.IsFailure)
             return BadRequest(new ErrorResponse(command.Error));
 
-        var result = await _mediator.Send(command.Value, cancellationToken);
+        var result = await handler.Execute(command.Value, cancellationToken);
         if (result.IsFailure)
             return BadRequest(new ErrorResponse(result.Error));
 
@@ -40,19 +36,5 @@ public class OrdersController : ControllerBase
         if (status.HasNoValue)
             return NotFound();
         return Ok(new { status = status.Value });
-    }
-
-    [HttpPatch("{id}/cancel")]
-    public async Task<IActionResult> CancelOrder(int id, CancellationToken cancellationToken)
-    {
-        var command = CancelOrderCommand.Create(id);
-        if (command.IsFailure)
-            return BadRequest(new ErrorResponse(command.Error));
-
-        var result = await _mediator.Send(command.Value, cancellationToken);
-        if (result.IsFailure)
-            return BadRequest(new ErrorResponse(result.Error));
-
-        return Ok();
     }
 }

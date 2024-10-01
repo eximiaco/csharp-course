@@ -10,4 +10,6 @@ public interface IOrdersRepository : IRepository<Order>
     Task<Maybe<Order>> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<Order>> GetAllByStateAsync(IOrderState state, CancellationToken cancellationToken);
     Task<IEnumerable<Order>> GetAllFromYesterdayReadOnlyAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<Order>> GetAllWaitingPayment(CancellationToken cancellationToken);
+    Task<IEnumerable<Product>> GetProductsById(IEnumerable<int> ids, CancellationToken cancellationToken);
 }

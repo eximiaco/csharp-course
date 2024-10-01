@@ -1,5 +1,6 @@
-﻿using Eximia.CsharpCourse.Orders.Commands;
-using MediatR;
+﻿using Eximia.CsharpCourse.Orders.ProcessPayment;
+using Eximia.CsharpCourse.Orders.Repository;
+using Eximia.CsharpCourse.SeedWork.EFCore;
 
 namespace Eximia.CsharpCourse.Workers.Jobs;
 
@@ -23,10 +24,24 @@ public class ProcessOrdersPaymentsJob : BackgroundService
 
             // Create scope, so we get request services
             await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
+            
+            var factory = asyncScope.ServiceProvider
+                .GetRequiredService<IEFDbContextFactory<EximiaCsharpCourseDbContext>>();
+            var accessor = asyncScope.ServiceProvider
+                .GetRequiredService<IEFDbContextAccessor<EximiaCsharpCourseDbContext>>();
+            var ordersRepository = asyncScope.ServiceProvider.GetRequiredService<IOrdersRepository>();
+            var processOrderPaymentHandler =
+                asyncScope.ServiceProvider.GetRequiredService<ProcessOrderPaymentCommandHandler>();
+            
+            await using var dbContext = factory.Create();
+            accessor.Register(dbContext);
 
-            // Get service from scope
-            var mediator = asyncScope.ServiceProvider.GetRequiredService<IMediator>();
-            await mediator.Send(new ProcessOrdersPaymentsCommand());
+            var orderToProcessPayment = await ordersRepository.GetAllWaitingPayment(stoppingToken);
+
+            foreach (var order in orderToProcessPayment)
+                await processOrderPaymentHandler.Handle(new ProcessOrderPaymentCommand(order.Id), stoppingToken);
+            
+            await accessor.ClearAsync();
         }
     }
 }

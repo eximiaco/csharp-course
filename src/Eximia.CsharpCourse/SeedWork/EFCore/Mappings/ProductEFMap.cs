@@ -1,5 +1,4 @@
-﻿using Eximia.CsharpCourse.Products;
-using Eximia.CsharpCourse.Products.Discounts;
+﻿using Eximia.CsharpCourse.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

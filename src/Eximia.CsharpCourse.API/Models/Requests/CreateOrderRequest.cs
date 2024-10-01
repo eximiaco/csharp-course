@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Eximia.CsharpCourse.Orders.Commands;
+using Eximia.CsharpCourse.Orders.CreateOrder;
 using Eximia.CsharpCourse.SeedWork;
 
 namespace Eximia.CsharpCourse.API.Models.Requests;
