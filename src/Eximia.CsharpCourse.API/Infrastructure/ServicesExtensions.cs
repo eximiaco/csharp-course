@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Eximia.CsharpCourse.SeedWork.Kafka;
+using Silverback.Messaging.Configuration;
 
 namespace Eximia.CsharpCourse.API.Infrastructure;
 
@@ -65,6 +67,26 @@ internal static class ServicesExtensions
             x.SwaggerDoc("v1", new OpenApiInfo { Title = "Eximia C# Course API" });
         });
 
+        return services;
+    }
+    
+    public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
+    {
+        IConfigurationSection kafkaSection = configuration.GetSection("Kafka");
+        var kafkaConfig = new KafkaConfig();
+        kafkaConfig.Connection = kafkaSection.GetSection("Connection").Get<KafkaConnectionConfig>()!;
+        services.AddSingleton(kafkaConfig);
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(config => config.AddKafka())
+            .AddKafkaEndpoints(endpoints => endpoints
+                    .Configure(config => config.Configure(kafkaConfig))
+                // .AddOutbound<InscricaoRealizadaEvento>(endpoint => endpoint
+                //     .ProduceTo("inscricoes")
+                //     .WithKafkaKey<InscricaoRealizadaEvento>(envelope => envelope.Message!.Id)
+                //     .SerializeAsJson(serializer => serializer.UseFixedType<InscricaoRealizadaEvento>())
+                //     .DisableMessageValidation())
+            );
         return services;
     }
 }
