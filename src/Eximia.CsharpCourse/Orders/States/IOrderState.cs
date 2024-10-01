@@ -6,10 +6,10 @@ public interface IOrderState
 {
     string Name { get; }
 
-    Result Cancel(Order order);
-    Result ProcessPayment(Order order);
-    Result CompletePayment(Order order);
-    Result Separate(Order order);
+    Result CanCancel(Order order);
+    Result CanProcessPayment(Order order);
+    Result CanCompletePayment(Order order);
+    Result CanSeparate(Order order);
     Result WaitForStock(Order order);
-    Result Complete(Order order);
+    Result CanComplete(Order order);
 }

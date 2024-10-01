@@ -15,7 +15,6 @@ builder
 builder.Services
     .AddHealth(builder.Configuration)
     .AddCustomOptions(builder.Configuration)
-    .AddBus()
     .AddWorkersServices()
     .AddControllers();
 

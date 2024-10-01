@@ -1,20 +1,19 @@
-﻿using Eximia.CsharpCourse.Payments.IntegrationEvents;
-using MassTransit;
+﻿using Eximia.CsharpCourse.Orders.Commands;
 using MediatR;
 
 namespace Eximia.CsharpCourse.Payments.DomainEvents.Handlers;
 
 public class PaymentRefundedDomainEventHandler : INotificationHandler<PaymentRefundedDomainEvent>
 {
-    private readonly IBus _bus;
+    private readonly IMediator _mediator;
 
-    public PaymentRefundedDomainEventHandler(IBus bus)
+    public PaymentRefundedDomainEventHandler(IMediator mediator)
     {
-        _bus = bus;
+        _mediator = mediator;
     }
 
     public async Task Handle(PaymentRefundedDomainEvent notification, CancellationToken cancellationToken)
     {
-        await _bus.Publish(new PaymentRefundedIntegrationEvent(notification.Payment.Id, notification.Payment.OrderId), cancellationToken).ConfigureAwait(false);
+        await _mediator.Send(new RefundOrderPaymentCommand(notification.Payment.OrderId)).ConfigureAwait(false);
     }
 }

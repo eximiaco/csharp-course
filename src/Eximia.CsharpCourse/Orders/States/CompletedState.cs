@@ -6,19 +6,19 @@ public class CompletedState : IOrderState
 {
     public string Name => "Completed";
 
-    public Result Cancel(Order order)
+    public Result CanCancel(Order order)
         => Result.Failure("Pedido já está concluído.");
 
-    public Result Complete(Order order)
+    public Result CanComplete(Order order)
         => Result.Failure("Pedido já está concluído.");
 
-    public Result CompletePayment(Order order)
+    public Result CanCompletePayment(Order order)
         => Result.Failure("Pedido já está concluído.");
 
-    public Result ProcessPayment(Order order)
+    public Result CanProcessPayment(Order order)
         => Result.Failure("Pedido já está concluído.");
 
-    public Result Separate(Order order)
+    public Result CanSeparate(Order order)
         => Result.Failure("Pedido já está concluído.");
 
     public Result WaitForStock(Order order)

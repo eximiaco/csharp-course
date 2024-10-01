@@ -1,24 +1,28 @@
-﻿using Eximia.CsharpCourse.Orders.IntegrationEvents;
-using MassTransit;
+﻿using Eximia.CsharpCourse.Orders.Commands;
+using Eximia.CsharpCourse.Products.Commands;
 using MediatR;
 
 namespace Eximia.CsharpCourse.Orders.DomainEvents.Handlers;
 
 public class OrderIsBeingSeparatedDomainEventHandler : INotificationHandler<OrderIsBeingSeparatedDomainEvent>
 {
-    private readonly IBus _bus;
+    private readonly IMediator _mediator;
 
-    public OrderIsBeingSeparatedDomainEventHandler(IBus bus)
+    public OrderIsBeingSeparatedDomainEventHandler(IMediator mediator)
     {
-        _bus = bus;
+        _mediator = mediator;
     }
 
     public async Task Handle(OrderIsBeingSeparatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        // Publica um evento de integração indicando que um pedido está sendo separado
-        // Os contextos interessados podem se inscrever para receber esse evento
-        await _bus.Publish(new OrderIsBeingSeparatedIntegrationEvent(
+        var result = await _mediator.Send(new WriteOffProductsFromStockCommand(
             notification.Order.Id,
-            notification.Order.Items.Select(i => i.ProductId)), cancellationToken).ConfigureAwait(false);
+            notification.Order.Items.Select(i => i.ProductId)),
+            cancellationToken).ConfigureAwait(false);
+
+        if (result.IsFailure)
+            await _mediator.Send(new WaitForStockCommand(notification.Order.Id)).ConfigureAwait(false);
+        else
+            await _mediator.Send(new CompleteOrderCommand(notification.Order.Id)).ConfigureAwait(false);
     }
 }

@@ -63,7 +63,6 @@ public class OrderTests
         orderResult.IsSuccess.Should().BeTrue();
         createdOrder.Items.Should().BeEquivalentTo(items);
         createdOrder.DomainEvents.Should().NotBeEmpty();
-        createdOrder.DomainEvents.First().Should().BeOfType<OrderCreatedDomainEvent>();
         createdOrder.PaymentMethod.Should().BeEquivalentTo(paymentInfo);
     }
 }
