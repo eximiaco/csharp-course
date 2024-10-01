@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Eximia.CsharpCourse.Orders.Commands;
 
-public record CreateOrderCommand : ICommand<Result<Order>>
+public record CreateOrderCommand
 {
     private CreateOrderCommand(IEnumerable<ItemDto> items, PaymentMethodDto paymentMethod)
     {

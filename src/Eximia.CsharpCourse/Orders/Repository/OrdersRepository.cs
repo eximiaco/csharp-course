@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using Eximia.CsharpCourse.Orders.States;
-using Eximia.CsharpCourse.SeedWork;
 using Eximia.CsharpCourse.SeedWork.EFCore;
 using Microsoft.EntityFrameworkCore;
 

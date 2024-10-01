@@ -1,5 +1,4 @@
-﻿using Eximia.CsharpCourse.SeedWork;
-using Eximia.CsharpCourse.SeedWork.EFCore;
+﻿using Eximia.CsharpCourse.SeedWork.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Eximia.CsharpCourse.Products.Repository;

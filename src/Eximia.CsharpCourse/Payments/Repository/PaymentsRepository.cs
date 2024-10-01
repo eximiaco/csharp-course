@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using Eximia.CsharpCourse.SeedWork;
 using Eximia.CsharpCourse.SeedWork.EFCore;
 using Microsoft.EntityFrameworkCore;
 

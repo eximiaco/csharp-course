@@ -1,4 +1,6 @@
-﻿namespace Eximia.CsharpCourse.SeedWork;
+﻿using Eximia.CsharpCourse.SeedWork.EFCore;
+
+namespace Eximia.CsharpCourse.SeedWork;
 
 public interface IRepository<T> where T : IAggregateRoot
 {

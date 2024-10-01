@@ -10,5 +10,10 @@ internal class InfrastructureModule : Module
     {
         builder.RegisterType<EximiaCsharpCourseDbContextFactory>().As<IEFDbContextFactory<EximiaCsharpCourseDbContext>>().InstancePerLifetimeScope();
         builder.RegisterType<EximiaCsharpCourseDbContextAccessor>().As<IEFDbContextAccessor<EximiaCsharpCourseDbContext>>().InstancePerLifetimeScope();
+
+        builder
+            .RegisterType<EfUnitOfWork>()
+            .As<IEfUnitOfWork>()
+            .InstancePerLifetimeScope();
     }
 }

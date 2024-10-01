@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using Eximia.CsharpCourse.SeedWork.Behaviors;
-using Eximia.CsharpCourse.SeedWork;
 using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 using Module = Autofac.Module;
 using MediatR.Extensions.Autofac.DependencyInjection;
+using Eximia.CsharpCourse.SeedWork.EFCore;
 
 namespace Eximia.CsharpCourse.API.Infrastructure.AutofacModules;
 

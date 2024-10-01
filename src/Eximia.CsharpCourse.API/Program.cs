@@ -19,6 +19,7 @@ builder.Services
     .RemoveModelValidation()
     .AddSwagger()
     .AddBus()
+    .AddTransient<UnitOfWorkMiddleware>()
     .AddControllersWithFilter();
     
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -40,6 +41,7 @@ if (!app.Environment.IsProduction())
 
 app.UseHealthChecks("/health-check");
 app.UseHttpsRedirection();
+app.UseMiddleware<UnitOfWorkMiddleware>();
 app.MapControllers();
 app.Run();
 

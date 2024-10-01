@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Eximia.CsharpCourse.SeedWork;
+using Eximia.CsharpCourse.SeedWork.EFCore;
 using System.Reflection;
 using Module = Autofac.Module;
 
