@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EscolaEximia.HttpService", "EscolaEximia.HttpService\EscolaEximia.HttpService.csproj", "{0B14A154-11A2-4EC7-A006-84B484FCD843}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EscolaEximia.TestesUnidade", "EscolaEximia.TestesUnidade\EscolaEximia.TestesUnidade.csproj", "{CE7B8710-FE22-4EDB-B2EB-E3B42A5EECCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0B14A154-11A2-4EC7-A006-84B484FCD843}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B14A154-11A2-4EC7-A006-84B484FCD843}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B14A154-11A2-4EC7-A006-84B484FCD843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE7B8710-FE22-4EDB-B2EB-E3B42A5EECCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE7B8710-FE22-4EDB-B2EB-E3B42A5EECCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE7B8710-FE22-4EDB-B2EB-E3B42A5EECCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE7B8710-FE22-4EDB-B2EB-E3B42A5EECCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
