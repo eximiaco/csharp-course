@@ -60,9 +60,11 @@ public partial class Order : AggregateRoot<int>
         AddDomainEvent(new OrderCanceledDomainEvent(this));
     }
 
-    public void ProcessPayment()
+    public Result ProcessPayment()
     {
-        State.ProcessPayment(this);
+        if(State.ProcessPayment(this) is var result && result.IsFailure)
+            return Result.Failure<Result>(result.Error);
+        return Result.Success();
     }
     
     public void Cancel()

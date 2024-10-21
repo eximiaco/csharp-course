@@ -34,4 +34,19 @@ public interface IDiscountStrategy
     decimal Calculate(DiscountStrategyContext context);
 }
 
-public readonly record struct DiscountStrategyContext(int Quantity, DateTime OrderDate, decimal Amount, EPaymentMethod PaymentMethod);
+public readonly record struct DiscountStrategyContext(
+    int Quantity, DateTime OrderDate, 
+    decimal Amount, EPaymentMethod PaymentMethod);
+
+
+public class CreditCardDiscount : IDiscountStrategy
+{
+    public int Discount { get; set; }
+    
+    public decimal Calculate(DiscountStrategyContext context)
+    {
+        if (context.PaymentMethod == EPaymentMethod.CreditCard)
+            return Discount;
+        return 0;
+    }
+}

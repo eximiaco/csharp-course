@@ -21,6 +21,7 @@ public class CreateOrderCommandHandler(
         if (order.IsFailure)
             return order;
 
+        //order.Value.Calculate(products);
         calculateOrderValueDomainService.Calculate(order.Value, products);
 
         await ordersRepository.AddAsync(order.Value, cancellationToken).ConfigureAwait(false);

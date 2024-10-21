@@ -18,7 +18,10 @@ public class ProcessOrderPaymentCommandHandler(
         if(order.HasNoValue) 
             return Result.Failure("Order is invalid");
         
-        order.Value.ProcessPayment();
+        if(order.Value.ProcessPayment() is var resultProcess 
+           && resultProcess.IsFailure)
+            return Result.Failure(resultProcess.Error);            
+        
         var payment = Payment.Create(order.Value.Amount, order.Value.Id, order.Value.PaymentMethod.Installments, 
             order.Value.PaymentMethod.Method);
 

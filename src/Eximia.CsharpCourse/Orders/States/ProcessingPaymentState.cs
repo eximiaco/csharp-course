@@ -18,10 +18,10 @@ public class ProcessingPaymentState : IOrderState
 
     public Result CompletePayment(Order order, Payment payment)
     {
-        if (payment.Status != EPaymentStatus.Confirmed)
-           order.ChangeState(new CanceledState());
+        if (payment.Status == EPaymentStatus.Confirmed)
+           order.ChangeState(new CompletedState());
         else    
-            order.ChangeState(new CompletedState());
+            order.ChangeState(new CanceledState());
         return Result.Success();
     }
 
