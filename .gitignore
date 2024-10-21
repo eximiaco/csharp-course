@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+src/.idea/.idea.Eximia.CsharpCourse/.idea/projectSettingsUpdater.xml
+src/.idea/.idea.Eximia.CsharpCourse/.idea/workspace.xml
