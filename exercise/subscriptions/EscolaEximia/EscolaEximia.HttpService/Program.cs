@@ -1,7 +1,9 @@
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using EscolaEximia.HttpService.Dominio.Infraestrutura;
 using EscolaEximia.HttpService.infraestrutura;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,13 +25,8 @@ try
         .AddOptions()
         .AddCaching()
         .AddCustomMvc();
-
+    
     builder.Host.UseSerilog();
-    // builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
-    // {
-    //     builder.RegisterModule(new ApplicationModule());
-    // });
-    // builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
     
     var app = builder.Build();
     app.UseHealthChecks("/health-ready");
