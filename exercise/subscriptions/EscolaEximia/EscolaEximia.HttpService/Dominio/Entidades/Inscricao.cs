@@ -2,7 +2,7 @@ namespace EscolaEximia.HttpService.Dominio.Entidades;
 
 public sealed class Inscricao
 {
-    private Inscricao(){}
+    public Inscricao(){}
     
     public Guid Id { get; set; }
     public string Aluno { get; set; }

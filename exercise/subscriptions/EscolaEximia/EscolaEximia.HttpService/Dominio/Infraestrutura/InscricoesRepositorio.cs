@@ -30,14 +30,24 @@ public sealed class InscricoesRepositorio(
         return result == responsavel;
     }
 
-    // public async Task<Maybe<Turma>> RecuperarTurma(int id, CancellationToken cancellationToken)
-    // {
-    //     var turma = await dbContext.Get().Turmas.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
-    //     return turma ?? Maybe<Turma>.None;
-    // }
+    public async Task<Maybe<Aluno>> RecuperarAluno(string cpf)
+    {
+        return (await dbContext.Alunos.FirstOrDefaultAsync(c => c.Cpf == cpf)) ?? Maybe<Aluno>.None;
+    }
+    
+    public async Task<Maybe<Turma>> RecuperarTurma(int id, CancellationToken cancellationToken)
+    {
+        var turma = await dbContext.Turmas.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        return turma ?? Maybe<Turma>.None;
+    }
 
     public async Task Adicionar(Inscricao inscricao, CancellationToken cancellationToken)
     {
         await dbContext.Inscricoes.AddAsync(inscricao, cancellationToken);
     }
+
+    public Task Save()
+    {
+        return dbContext.SaveChangesAsync();
+    }   
 }
