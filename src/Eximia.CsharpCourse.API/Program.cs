@@ -18,7 +18,6 @@ builder.Services
     .AddHealth(builder.Configuration)
     .RemoveModelValidation()
     .AddSwagger()
-    .AddBus()
     .AddControllersWithFilter();
     
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());

@@ -1,5 +1,6 @@
-﻿using Eximia.CsharpCourse.SeedWork;
+﻿using CSharpFunctionalExtensions;
+using Eximia.CsharpCourse.SeedWork;
 
 namespace Eximia.CsharpCourse.Products.Commands;
 
-public record WriteOffProductsFromStockCommand(int OrderId, IEnumerable<int> ProductIds) : ICommand { }
+public record WriteOffProductsFromStockCommand(int OrderId, IEnumerable<int> ProductIds) : ICommand<Result> { }

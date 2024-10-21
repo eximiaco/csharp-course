@@ -1,7 +1,4 @@
-﻿using Eximia.CsharpCourse.Orders.Consumers;
-using Eximia.CsharpCourse.Payments.Consumers;
-using Eximia.CsharpCourse.Products.Consumers;
-using Eximia.CsharpCourse.SeedWork.Settings;
+﻿using Eximia.CsharpCourse.SeedWork.Settings;
 using Eximia.CsharpCourse.Workers.Jobs;
 using Flurl.Http;
 using MassTransit;
@@ -54,26 +51,6 @@ internal static class ServicesExtensions
         services.Configure<ApiBehaviorOptions>(opt =>
         {
             opt.SuppressModelStateInvalidFilter = true;
-        });
-
-        return services;
-    }
-
-    internal static IServiceCollection AddBus(this IServiceCollection services)
-    {
-        services.AddMassTransit(x =>
-        {
-            x.AddConsumer<ProcessPaymentConsumer>();
-            x.AddConsumer<CompleteOrderPaymentConsumer>();
-            x.AddConsumer<RefundOrderPaymentConsumer>();
-            x.AddConsumer<WaitForStockConsumer>();
-            x.AddConsumer<CompleteOrderConsumer>();
-            x.AddConsumer<WriteOffProductsFromStockConsumer>();
-
-            x.UsingInMemory((context, cfg) =>
-            {
-                cfg.ConfigureEndpoints(context);
-            });
         });
 
         return services;

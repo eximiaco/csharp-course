@@ -1,22 +1,19 @@
-﻿using Eximia.CsharpCourse.Payments.IntegrationEvents;
-using MassTransit;
+﻿using Eximia.CsharpCourse.Orders.Commands;
 using MediatR;
 
 namespace Eximia.CsharpCourse.Payments.DomainEvents.Handlers;
 
 public class PaymentRegisteredDomainEventHandler : INotificationHandler<PaymentRegisteredDomainEvent>
 {
-    private readonly IBus _bus;
+    private readonly IMediator _mediator;
 
-    public PaymentRegisteredDomainEventHandler(IBus bus)
+    public PaymentRegisteredDomainEventHandler(IMediator mediator)
     {
-        _bus = bus;
+        _mediator = mediator;
     }
 
     public async Task Handle(PaymentRegisteredDomainEvent notification, CancellationToken cancellationToken)
     {
-        // Publica um evento de integração indicando que um pagamento foi registrado
-        // Os contextos interessados podem se inscrever para receber esse evento
-        await _bus.Publish(new PaymentRegisteredIntegrationEvent(notification.Payment.Id, notification.Payment.OrderId), cancellationToken).ConfigureAwait(false);
+        await _mediator.Send(new CompleteOrderPaymentCommand(notification.Payment.OrderId)).ConfigureAwait(false);
     }
 }

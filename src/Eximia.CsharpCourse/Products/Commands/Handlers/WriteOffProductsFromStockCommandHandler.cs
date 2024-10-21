@@ -1,29 +1,21 @@
-﻿using Eximia.CsharpCourse.Products.IntegrationEvents;
+﻿using CSharpFunctionalExtensions;
 using Eximia.CsharpCourse.Products.Integrations.Stock;
-using MassTransit;
 using MediatR;
 
 namespace Eximia.CsharpCourse.Products.Commands.Handlers;
 
-public class WriteOffProductsFromStockCommandHandler : IRequestHandler<WriteOffProductsFromStockCommand>
+public class WriteOffProductsFromStockCommandHandler : IRequestHandler<WriteOffProductsFromStockCommand, Result>
 {
     private readonly IStockApi _stockApi;
-    private readonly IBus _bus;
 
-    public WriteOffProductsFromStockCommandHandler(IStockApi stockApi, IBus bus)
+    public WriteOffProductsFromStockCommandHandler(IStockApi stockApi)
     {
         _stockApi = stockApi;
-        _bus = bus;
     }
 
-    public async Task Handle(WriteOffProductsFromStockCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(WriteOffProductsFromStockCommand command, CancellationToken cancellationToken)
     {
-        var result = await _stockApi.WriteOffAsync(command.ProductIds, cancellationToken).ConfigureAwait(false);
-
         // Num cenário real, seria checado quais produtos deram erro e quais não para um tratamento adequado
-        if (result.IsFailure)
-            await _bus.Publish(new FailureToWriteOffStockIntegrationEvent(command.OrderId), cancellationToken).ConfigureAwait(false);
-        else
-            await _bus.Publish(new SuccessfullyWrittenOffStockIntegrationEvent(command.OrderId), cancellationToken).ConfigureAwait(false);
+        return await _stockApi.WriteOffAsync(command.ProductIds, cancellationToken).ConfigureAwait(false);
     }
 }

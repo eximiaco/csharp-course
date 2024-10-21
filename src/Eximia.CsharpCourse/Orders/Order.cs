@@ -36,23 +36,75 @@ public partial class Order : AggregateRoot<int>
         if (paymentMethod.Method == EPaymentMethod.CreditCard && paymentMethod.Installments > 12)
             return Result.Failure<Order>("Não é possível parcelar em mais de 12x.");
 
-        var order = new Order(
+        return new Order(
             id: 0,
             state: new AwaitingProcessingState(),
             items,
             paymentMethod,
             date: DateTime.UtcNow);
-
-        order.AddDomainEvent(new OrderCreatedDomainEvent(order));
-        return order;
     }
 
-    public void ChangeState(IOrderState state) => State = state;
-    public Result Cancel() => State.Cancel(this);
-    public Result ProcessPayment() => State.ProcessPayment(this);
-    public Result CompletePayment() => State.CompletePayment(this);
-    public Result Complete() => State.Complete(this);
-    public Result Separate() => State.Separate(this);
-    public Result WaitForStock() => State.WaitForStock(this);
+    public Result Cancel()
+    {
+        var result = State.CanCancel(this);
+        if (result.IsFailure)
+            return result;
+
+        State = new CanceledState();
+        return result;
+    }
+
+    public Result ProcessPayment()
+    {
+        var result = State.CanProcessPayment(this);
+        if (result.IsFailure)
+            return result;
+
+        State = new ProcessingPaymentState();
+        AddDomainEvent(new OrderIsProcessingPaymentDomainEvent(this));
+        return result;
+    }
+
+    public Result CompletePayment()
+    {
+        var result = State.CanCompletePayment(this);
+        if (result.IsFailure)
+            return result;
+
+        State = new PaymentCompletedState();
+        return result;
+    }
+
+    public Result Complete()
+    {
+        var result = State.CanComplete(this);
+        if (result.IsFailure)
+            return result;
+
+        State = new CompletedState();
+        return result;
+    }
+
+    public Result Separate()
+    {
+        var result = State.CanSeparate(this);
+        if (result.IsFailure)
+            return result;
+
+        State = new SeparatingOrderState();
+        AddDomainEvent(new OrderIsBeingSeparatedDomainEvent(this));
+        return result;
+    }
+
+    public Result WaitForStock()
+    {
+        var result = State.WaitForStock(this);
+        if (result.IsFailure)
+            return result;
+
+        State = new AwaitingForStockState();
+        return result;
+    }
+
     public void Refund() => PaymentMethod.Refund();
 }

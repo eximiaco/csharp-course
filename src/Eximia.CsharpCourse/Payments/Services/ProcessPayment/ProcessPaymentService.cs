@@ -22,7 +22,7 @@ public class ProcessPaymentService : IProcessPaymentService
             result = await _ebanxApi.CapturePixTransactionAsync(payment, cancellationToken).ConfigureAwait(false);
 
         if (result.IsSuccess)
-            payment.RegisterPayment(result.Value);            
+            payment.RegisterPayment(result);            
         return result;
     }
 }
