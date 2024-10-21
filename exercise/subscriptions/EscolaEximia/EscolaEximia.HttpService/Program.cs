@@ -2,6 +2,7 @@ using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EscolaEximia.HttpService.Dominio.Infraestrutura;
+using EscolaEximia.HttpService.Handlers;
 using EscolaEximia.HttpService.infraestrutura;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -25,6 +26,12 @@ try
         .AddOptions()
         .AddCaching()
         .AddCustomMvc();
+    
+    builder.Services.AddDbContext<InscricoesDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("InscricoesConnection")));
+    builder.Services.AddScoped<InscricoesRepositorio>();
+    builder.Services.AddScoped<RealizarInscricaoHandler>();
+    builder.Services.AddHostedService<DatabaseInitializer>();
     
     builder.Host.UseSerilog();
     
