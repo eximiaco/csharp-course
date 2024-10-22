@@ -1,5 +1,7 @@
 using EscolaEximia.HttpService.Dominio.Inscricoes;
 using EscolaEximia.HttpService.Dominio.Inscricoes.Infra.Mapeamento;
+using EscolaEximia.HttpService.Dominio.Regras;
+using EscolaEximia.HttpService.Dominio.Regras.infra.Mapeamento;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -14,6 +16,7 @@ public class InscricoesDbContext: DbContext
     public DbSet<Inscricao> Inscricoes { get; set; }
     public DbSet<Turma> Turmas { get; set; }
     public DbSet<Aluno> Alunos { get; set; }
+    public DbSet<RegraPorTurma> RegrasPorTurma { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
@@ -47,6 +50,7 @@ public class InscricoesDbContext: DbContext
         modelBuilder.ApplyConfiguration(new InscricaoConfiguration());
         modelBuilder.ApplyConfiguration(new TurmaConfiguration());
         modelBuilder.ApplyConfiguration(new AlunoConfiguration());
+        modelBuilder.ApplyConfiguration(new RegraConfiguration());
     }
 }
 

@@ -1,4 +1,5 @@
 using EscolaEximia.HttpService.Dominio.Inscricoes;
+using EscolaEximia.HttpService.Dominio.Regras;
 using Xunit;
 
 namespace EscolaEximia.Tests

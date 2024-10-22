@@ -1,63 +1,126 @@
 using CSharpFunctionalExtensions;
-using Moq;
-using System.Threading.Tasks;
 using EscolaEximia.HttpService.Dominio.Inscricoes;
 using EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
 using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
-using Xunit;
+using EscolaEximia.HttpService.Dominio.Regras;
+using EscolaEximia.HttpService.Dominio.Regras.infra;
+using Moq;
 
-namespace EscolaEximia.TestesUnidade;
-
-public class RealizarInscricoesTestes
+namespace EscolaEximia.TestesUnidade
 {
-    [Fact]
-    public async Task DeveAdicionarInscricaoAtivaQuandoTodosOsCriteriosSaoAtendidos()
+    public class RealizarInscricaoHandlerTests
     {
-        // Arrange
-        var mockRepositorio = new Mock<InscricoesRepositorio>();
-        
-        mockRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
-        
-        var turma = new Turma(
-            id: 1,
-            vagas: 10,
-            masculino: true,
-            feminino: true,
-            limiteIdade: 18
-        );
-        mockRepositorio.Setup(r => r.RecuperarTurma(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe<Turma>.From(turma));
+        private readonly Mock<InscricoesRepositorio> _mockInscricoesRepositorio;
+        private readonly Mock<RegraPorTurmaRepository> _mockRegraPorTurmaRepository;
+        private readonly RealizarInscricaoHandler _handler;
 
-        var aluno = new Aluno("12345678900", ESexo.Masculino, 15);
-        mockRepositorio.Setup(r => r.RecuperarAluno(It.IsAny<string>()))
-            .ReturnsAsync(Maybe<Aluno>.From(aluno));
-
-        mockRepositorio.Setup(r => r.Adicionar(It.IsAny<Inscricao>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-        mockRepositorio.Setup(r => r.Save()).Returns(Task.CompletedTask);
-
-        var handler = new RealizarInscricaoHandler(mockRepositorio.Object);
-
-        var command = new RealizarInscricaoCommand
+        public RealizarInscricaoHandlerTests()
         {
-            Aluno = "12345678900",
-            Responsavel = "98765432100",
-            Turma = 1
-        };
+            _mockInscricoesRepositorio = new Mock<InscricoesRepositorio>();
+            _mockRegraPorTurmaRepository = new Mock<RegraPorTurmaRepository>();
+            _handler = new RealizarInscricaoHandler(_mockInscricoesRepositorio.Object, _mockRegraPorTurmaRepository.Object);
+        }
 
-        // Act
-        var resultado = await handler.Handle(command, CancellationToken.None);
+        [Fact]
+        public async Task Handle_QuandoTodosOsDadosSaoValidos_DeveRetornarSucesso()
+        {
+            // Arrange
+            var command = new RealizarInscricaoCommand("12345678900", "12345678900", 1);
+            var aluno = new Aluno("12345678900", ESexo.Masculino, 15);
+            var turma = new Turma(1, 10, true, true, 18);
+            var regras = new List<RegraPorTurma>
+            {
+                new RegraPorTurma(Guid.NewGuid(), 1, new ValidacaoVagas()),
+                new RegraPorTurma(Guid.NewGuid(), 1, new ValidacaoSexo()),
+                new RegraPorTurma(Guid.NewGuid(), 1, new ValidacaoIdade())
+            };
 
-        // Assert
-        Assert.True(resultado.IsSuccess);
-        Assert.NotNull(resultado.Value);
-        Assert.True(resultado.Value.Ativa);
-        Assert.Equal(command.Aluno, resultado.Value.AlunoCpf);
-        Assert.Equal(command.Responsavel, resultado.Value.Responsavel);
-        Assert.Equal(command.Turma, resultado.Value.Turma.Id);
+            _mockInscricoesRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarAluno(It.IsAny<string>())).ReturnsAsync(Maybe<Aluno>.From(aluno));
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarTurma(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(Maybe<Turma>.From(turma));
+            _mockRegraPorTurmaRepository.Setup(r => r.ObterRegrasPorTurmaAsync(It.IsAny<int>())).ReturnsAsync(regras);
 
-        mockRepositorio.Verify(r => r.Adicionar(It.IsAny<Inscricao>(), It.IsAny<CancellationToken>()), Times.Once);
-        Assert.Equal(command.Aluno, resultado.Value.AlunoCpf);
-        mockRepositorio.Verify(r => r.Save(), Times.Once);
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            _mockInscricoesRepositorio.Verify(r => r.Adicionar(It.IsAny<Inscricao>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockInscricoesRepositorio.Verify(r => r.Save(), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_QuandoResponsavelNaoExiste_DeveRetornarFalha()
+        {
+            // Arrange
+            var command = new RealizarInscricaoCommand("12345678900", "12345678900",1);
+            _mockInscricoesRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(false);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsFailure);
+            Assert.Equal("Responsável inválido", result.Error);
+        }
+
+        [Fact]
+        public async Task Handle_QuandoAlunoNaoExiste_DeveRetornarFalha()
+        {
+            // Arrange
+            var command = new RealizarInscricaoCommand("12345678900", "12345678900",1);
+            _mockInscricoesRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarAluno(It.IsAny<string>())).ReturnsAsync(Maybe<Aluno>.None);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsFailure);
+            Assert.Equal("Aluno inválido", result.Error);
+        }
+
+        [Fact]
+        public async Task Handle_QuandoTurmaNaoExiste_DeveRetornarFalha()
+        {
+            // Arrange
+            var command = new RealizarInscricaoCommand("12345678900", "12345678900",1);
+            var aluno = new Aluno("12345678900", ESexo.Masculino, 15);
+            _mockInscricoesRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarAluno(It.IsAny<string>())).ReturnsAsync(Maybe<Aluno>.From(aluno));
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarTurma(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(Maybe<Turma>.None);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsFailure);
+            Assert.Equal("Turma inválida", result.Error);
+        }
+
+        [Fact]
+        public async Task Handle_QuandoValidacaoFalha_DeveRetornarFalha()
+        {
+            // Arrange
+            var command = new RealizarInscricaoCommand("12345678900", "12345678900", 1);
+            var aluno = new Aluno("12345678900", ESexo.Masculino, 20);
+            var turma = new Turma(1, 10, true, true, 18);
+            var regras = new List<RegraPorTurma>
+            {
+                new RegraPorTurma(Guid.NewGuid(), 1, new ValidacaoIdade())
+            };
+
+            _mockInscricoesRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarAluno(It.IsAny<string>())).ReturnsAsync(Maybe<Aluno>.From(aluno));
+            _mockInscricoesRepositorio.Setup(r => r.RecuperarTurma(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(Maybe<Turma>.From(turma));
+            _mockRegraPorTurmaRepository.Setup(r => r.ObterRegrasPorTurmaAsync(It.IsAny<int>())).ReturnsAsync(regras);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsFailure);
+            Assert.Equal("Aluno acima do limite de idade da turma.", result.Error);
+        }
     }
 }

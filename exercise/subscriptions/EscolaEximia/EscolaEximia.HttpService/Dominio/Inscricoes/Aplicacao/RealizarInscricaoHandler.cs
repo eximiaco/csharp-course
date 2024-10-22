@@ -1,38 +1,44 @@
 using CSharpFunctionalExtensions;
 using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
+using EscolaEximia.HttpService.Dominio.Regras;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using EscolaEximia.HttpService.Dominio.Regras.infra;
 
 namespace EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
 
-public class RealizarInscricaoHandler
+public class RealizarInscricaoHandler(
+    InscricoesRepositorio inscricoesRepositorio,
+    RegraPorTurmaRepository regraPorTurmaRepository)
 {
-    private readonly InscricoesRepositorio _inscricoesRepositorio;
-
-    public RealizarInscricaoHandler(InscricoesRepositorio inscricoesRepositorio)
-    {
-        _inscricoesRepositorio = inscricoesRepositorio;
-    }
-
     public async Task<Result<Inscricao>> Handle(RealizarInscricaoCommand command, CancellationToken cancellationToken)
     {
-        if (!await _inscricoesRepositorio.ResponsavelExiste(command.Responsavel))
+        if (!await inscricoesRepositorio.ResponsavelExiste(command.Responsavel))
             return Result.Failure<Inscricao>("Responsável inválido");
         
-        var alunoResult = await _inscricoesRepositorio.RecuperarAluno(command.Aluno);
+        var alunoResult = await inscricoesRepositorio.RecuperarAluno(command.Aluno);
         if (alunoResult.HasNoValue)
             return Result.Failure<Inscricao>("Aluno inválido");
 
-        var turmaResult = await _inscricoesRepositorio.RecuperarTurma(command.Turma, cancellationToken);
+        var turmaResult = await inscricoesRepositorio.RecuperarTurma(command.Turma, cancellationToken);
         if (turmaResult.HasNoValue)
             return Result.Failure<Inscricao>("Turma inválida");
 
-        var inscricaoResult = Inscricao.Criar(command.Aluno, alunoResult.Value, turmaResult.Value, command.Responsavel);
+        var regrasPorTurma = await regraPorTurmaRepository.ObterRegrasPorTurmaAsync(turmaResult.Value.Id);
+
+        var inscricaoResult = Inscricao.Criar(
+            alunoResult.Value, 
+            turmaResult.Value, 
+            command.Responsavel, 
+            regrasPorTurma.Select(c=> c.Regra));
         
         if (inscricaoResult.IsFailure)
             return Result.Failure<Inscricao>(inscricaoResult.Error);
 
         var inscricao = inscricaoResult.Value;
-        await _inscricoesRepositorio.Adicionar(inscricao, cancellationToken);
-        await _inscricoesRepositorio.Save();
+        await inscricoesRepositorio.Adicionar(inscricao, cancellationToken);
+        await inscricoesRepositorio.Save();
 
         return Result.Success(inscricao);
     }

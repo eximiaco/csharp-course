@@ -13,16 +13,15 @@ public sealed class InscricoesController : ControllerBase
     
     [HttpPost]
     public async Task<IActionResult> RealizarInscricao(
-        [FromBody]NovaInscricaoModel input, 
+        [FromBody] NovaInscricaoModel input, 
         [FromServices] RealizarInscricaoHandler handler,
         CancellationToken cancellationToken)
     {
-        var command = new RealizarInscricaoCommand
-        {
-            Aluno = input.CpfAluno,
-            Responsavel = input.CpfResponsavel,
-            Turma = input.CodigoTurma
-        };
+        var command = new RealizarInscricaoCommand(
+            Aluno: input.CpfAluno,
+            Responsavel: input.CpfResponsavel,
+            Turma: input.CodigoTurma
+        );
 
         var result = await handler.Handle(command, cancellationToken);
 
