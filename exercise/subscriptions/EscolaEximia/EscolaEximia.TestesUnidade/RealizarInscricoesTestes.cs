@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using EscolaEximia.HttpService.Dominio.Entidades;
 using EscolaEximia.HttpService.Dominio.Infraestrutura;
 using EscolaEximia.HttpService.Handlers;
+using EscolaEximia.HttpService.Dominio.Factories;
 using Moq;
 using System.Threading.Tasks;
 
@@ -14,8 +15,8 @@ public class RealizarInscricoesTestes
     {
         // Arrange
         var mockRepositorio = new Mock<InscricoesRepositorio>();
+        var inscricaoFactory = new InscricaoFactory();
         
-        mockRepositorio.Setup(r => r.AlunoExiste(It.IsAny<string>())).ReturnsAsync(true);
         mockRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
         
         var turma = new Turma(
@@ -30,6 +31,7 @@ public class RealizarInscricoesTestes
 
         var aluno = new Aluno
         {
+            Cpf = "12345678900",
             Sexo = ESexo.Masculino,
             Idade = 15
         };
@@ -40,7 +42,7 @@ public class RealizarInscricoesTestes
             .Returns(Task.CompletedTask);
         mockRepositorio.Setup(r => r.Save()).Returns(Task.CompletedTask);
 
-        var handler = new RealizarInscricaoHandler(mockRepositorio.Object);
+        var handler = new RealizarInscricaoHandler(mockRepositorio.Object, inscricaoFactory);
 
         var command = new RealizarInscricaoCommand
         {
