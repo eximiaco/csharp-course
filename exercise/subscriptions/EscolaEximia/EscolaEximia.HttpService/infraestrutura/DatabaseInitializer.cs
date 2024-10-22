@@ -1,4 +1,4 @@
-using EscolaEximia.HttpService.Dominio.Infraestrutura;
+using EscolaEximia.HttpService.Dominio;
 
 public class DatabaseInitializer : IHostedService
     {

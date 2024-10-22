@@ -1,6 +1,6 @@
 using CSharpFunctionalExtensions;
 
-namespace EscolaEximia.HttpService.Dominio.Entidades;
+namespace EscolaEximia.HttpService.Dominio.Inscricoes;
 
 public sealed class Inscricao : Entity<Guid>
 {

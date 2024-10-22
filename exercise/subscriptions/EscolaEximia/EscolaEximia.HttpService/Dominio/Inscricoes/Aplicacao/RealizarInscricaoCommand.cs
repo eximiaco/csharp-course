@@ -1,4 +1,4 @@
-namespace EscolaEximia.HttpService.Handlers;
+namespace EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
 
 public class RealizarInscricaoCommand
 {

@@ -1,7 +1,7 @@
-using EscolaEximia.HttpService.Dominio.Entidades;
+using EscolaEximia.HttpService.Dominio.Inscricoes;
 using Microsoft.EntityFrameworkCore;
 
-namespace EscolaEximia.HttpService.Dominio.Infraestrutura;
+namespace EscolaEximia.HttpService.Dominio;
 
 public class InscricoesDbContext: DbContext
 {

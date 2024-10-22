@@ -1,4 +1,4 @@
-namespace EscolaEximia.HttpService.Dominio.Entidades;
+namespace EscolaEximia.HttpService.Dominio.Inscricoes;
 
 public record Aluno(string Cpf, ESexo Sexo, int Idade);
 

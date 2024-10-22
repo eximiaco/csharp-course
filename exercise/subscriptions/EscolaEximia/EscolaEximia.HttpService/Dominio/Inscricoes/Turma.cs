@@ -1,4 +1,4 @@
-namespace EscolaEximia.HttpService.Dominio.Entidades;
+namespace EscolaEximia.HttpService.Dominio.Inscricoes;
 
 public record Turma
 {

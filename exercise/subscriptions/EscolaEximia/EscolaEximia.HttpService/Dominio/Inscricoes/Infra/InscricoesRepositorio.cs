@@ -1,10 +1,9 @@
 using CSharpFunctionalExtensions;
 using Dapper;
 using EscolaEximia.HttpService.Comum;
-using EscolaEximia.HttpService.Dominio.Entidades;
 using Microsoft.EntityFrameworkCore;
 
-namespace EscolaEximia.HttpService.Dominio.Infraestrutura;
+namespace EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
 
 public sealed class InscricoesRepositorio(
     InscricoesDbContext dbContext,

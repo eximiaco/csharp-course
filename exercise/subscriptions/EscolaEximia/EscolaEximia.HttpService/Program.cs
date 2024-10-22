@@ -1,6 +1,7 @@
 using System.Reflection;
-using EscolaEximia.HttpService.Dominio.Infraestrutura;
-using EscolaEximia.HttpService.Handlers;
+using EscolaEximia.HttpService.Dominio;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
 using EscolaEximia.HttpService.infraestrutura;
 using Microsoft.EntityFrameworkCore;
 using Serilog;

@@ -1,4 +1,4 @@
-using EscolaEximia.HttpService.Dominio.Entidades;
+using EscolaEximia.HttpService.Dominio.Inscricoes;
 using Xunit;
 
 namespace EscolaEximia.TestesUnidade;

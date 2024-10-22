@@ -1,4 +1,4 @@
-using EscolaEximia.HttpService.Handlers;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EscolaEximia.HttpService.Controllers;

@@ -1,9 +1,9 @@
 using CSharpFunctionalExtensions;
-using EscolaEximia.HttpService.Dominio.Entidades;
-using EscolaEximia.HttpService.Dominio.Infraestrutura;
-using EscolaEximia.HttpService.Handlers;
 using Moq;
 using System.Threading.Tasks;
+using EscolaEximia.HttpService.Dominio.Inscricoes;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
 using Xunit;
 
 namespace EscolaEximia.TestesUnidade;

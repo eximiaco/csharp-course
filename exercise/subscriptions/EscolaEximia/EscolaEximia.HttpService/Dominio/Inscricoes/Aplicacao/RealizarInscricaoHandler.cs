@@ -1,8 +1,7 @@
 using CSharpFunctionalExtensions;
-using EscolaEximia.HttpService.Dominio.Entidades;
-using EscolaEximia.HttpService.Dominio.Infraestrutura;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
 
-namespace EscolaEximia.HttpService.Handlers;
+namespace EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
 
 public class RealizarInscricaoHandler
 {
