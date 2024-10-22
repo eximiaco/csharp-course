@@ -5,6 +5,10 @@ namespace EscolaEximia.HttpService.Dominio.Inscricoes;
 
 public sealed class Inscricao : Entity<Guid>
 {
+    private Inscricao()
+    {
+    }
+
     private Inscricao(Guid id, string alunoCpf, string responsavel, Turma turma, bool ativa)
     {
         Id = id;

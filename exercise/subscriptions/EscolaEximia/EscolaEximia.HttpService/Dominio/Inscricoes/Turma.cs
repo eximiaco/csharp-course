@@ -8,6 +8,8 @@ public record Turma
     public bool Feminino { get; }
     public int LimiteIdade { get; }
 
+    private Turma(){}
+    
     public Turma(int id, int vagas, bool masculino, bool feminino, int limiteIdade)
     {
         Id = id;

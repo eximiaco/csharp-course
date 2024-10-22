@@ -4,6 +4,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EscolaEximia.HttpService", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EscolaEximia.TestesUnidade", "EscolaEximia.TestesUnidade\EscolaEximia.TestesUnidade.csproj", "{CE7B8710-FE22-4EDB-B2EB-E3B42A5EECCA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dependencies-comnpose", "dependencies-comnpose", "{0A81FE2B-8A28-43C1-B8A7-6E45A4783FFB}"
+	ProjectSection(SolutionItems) = preProject
+		dependencies-compose\docker-compose.yml = dependencies-compose\docker-compose.yml
+		dependencies-compose\mssql\Dockerfile = dependencies-compose\mssql\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

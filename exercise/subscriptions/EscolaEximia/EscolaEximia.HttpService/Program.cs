@@ -24,6 +24,7 @@ try
         .AddWorkersServices(builder.Configuration)
         .AddOptions()
         .AddCaching()
+        .AddLogs(builder.Configuration, serviceName!)
         .AddCustomMvc();
     
     builder.Services.AddDbContext<InscricoesDbContext>(options =>

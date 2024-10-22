@@ -1,5 +1,7 @@
 using EscolaEximia.HttpService.Dominio.Inscricoes;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra.Mapeamento;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace EscolaEximia.HttpService.Dominio;
 
@@ -42,7 +44,27 @@ public class InscricoesDbContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.ApplyConfiguration(new InscricoesConfigurations());
-        //modelBuilder.ApplyConfiguration(new TurmasConfigurations());
+        modelBuilder.ApplyConfiguration(new InscricaoConfiguration());
+        modelBuilder.ApplyConfiguration(new TurmaConfiguration());
+        modelBuilder.ApplyConfiguration(new AlunoConfiguration());
+    }
+}
+
+public class MigrationsDbContextFactory : IDesignTimeDbContextFactory<InscricoesDbContext>
+{
+    public InscricoesDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<InscricoesDbContext>();
+        var connectionString = "Server=localhost;Database=InscricoesDB;User Id=sa;Password=SenhaForte123!;TrustServerCertificate=True;";
+        
+        optionsBuilder.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
+
+        return new InscricoesDbContext(optionsBuilder.Options);
     }
 }
