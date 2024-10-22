@@ -2,9 +2,9 @@ using CSharpFunctionalExtensions;
 using EscolaEximia.HttpService.Dominio.Entidades;
 using EscolaEximia.HttpService.Dominio.Infraestrutura;
 using EscolaEximia.HttpService.Handlers;
-using EscolaEximia.HttpService.Dominio.Factories;
 using Moq;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace EscolaEximia.TestesUnidade;
 
@@ -15,26 +15,20 @@ public class RealizarInscricoesTestes
     {
         // Arrange
         var mockRepositorio = new Mock<InscricoesRepositorio>();
-        var inscricaoFactory = new InscricaoFactory();
         
         mockRepositorio.Setup(r => r.ResponsavelExiste(It.IsAny<string>())).ReturnsAsync(true);
         
         var turma = new Turma(
-            Id: 1,
-            Vagas: 10,
-            Masculino: true,
-            Feminino: true,
-            LimiteIdade: 18
+            id: 1,
+            vagas: 10,
+            masculino: true,
+            feminino: true,
+            limiteIdade: 18
         );
         mockRepositorio.Setup(r => r.RecuperarTurma(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe<Turma>.From(turma));
 
-        var aluno = new Aluno
-        {
-            Cpf = "12345678900",
-            Sexo = ESexo.Masculino,
-            Idade = 15
-        };
+        var aluno = new Aluno("12345678900", ESexo.Masculino, 15);
         mockRepositorio.Setup(r => r.RecuperarAluno(It.IsAny<string>()))
             .ReturnsAsync(Maybe<Aluno>.From(aluno));
 
@@ -42,7 +36,7 @@ public class RealizarInscricoesTestes
             .Returns(Task.CompletedTask);
         mockRepositorio.Setup(r => r.Save()).Returns(Task.CompletedTask);
 
-        var handler = new RealizarInscricaoHandler(mockRepositorio.Object, inscricaoFactory);
+        var handler = new RealizarInscricaoHandler(mockRepositorio.Object);
 
         var command = new RealizarInscricaoCommand
         {
@@ -58,11 +52,12 @@ public class RealizarInscricoesTestes
         Assert.True(resultado.IsSuccess);
         Assert.NotNull(resultado.Value);
         Assert.True(resultado.Value.Ativa);
-        Assert.Equal(command.Aluno, resultado.Value.Aluno);
+        Assert.Equal(command.Aluno, resultado.Value.AlunoCpf);
         Assert.Equal(command.Responsavel, resultado.Value.Responsavel);
-        Assert.Equal(command.Turma, resultado.Value.Turma);
+        Assert.Equal(command.Turma, resultado.Value.Turma.Id);
 
         mockRepositorio.Verify(r => r.Adicionar(It.IsAny<Inscricao>(), It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Equal(command.Aluno, resultado.Value.AlunoCpf);
         mockRepositorio.Verify(r => r.Save(), Times.Once);
     }
 }
