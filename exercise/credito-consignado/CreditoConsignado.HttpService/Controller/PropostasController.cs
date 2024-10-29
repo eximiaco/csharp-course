@@ -9,15 +9,38 @@ namespace CreditoConsignado.HttpService.Controller;
 [ApiVersion("1.0")]
 public class PropostasController : ControllerBase
 {
-    public record NovaProposta();
+    public record NovaProposta(
+        string Cpf,
+        string ConveniadaId,
+        decimal ValorSolicitado,
+        int QuantidadeParcelas,
+        string AgenteId,
+        DateTime DataNascimento,
+        string Endereco,
+        string UF,
+        string Telefone,
+        string Email,
+        decimal Rendimento
+    );
     
     [HttpPost]
-    public async Task<IActionResult> RealizarInscricao(
+    public async Task<IActionResult> CriarProposta(
         [FromBody] NovaProposta input, 
         [FromServices] NovaPropostaHandler handler,
         CancellationToken cancellationToken)
     {
         var command = new NovaPropostaCommand(
+            input.ConveniadaId,
+            input.ValorSolicitado,
+            input.QuantidadeParcelas,
+            input.AgenteId,
+            new DadosProponente(input.Cpf,
+                input.DataNascimento, 
+                input.Endereco, 
+                input.UF, 
+                input.Telefone, 
+                input.Email, 
+                input.Rendimento)
         );
 
         var result = await handler.Executar(command, cancellationToken);

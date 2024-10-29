@@ -1,11 +1,23 @@
+using CreditoConsignado.HttpService.Domain.Agentes;
+using CreditoConsignado.HttpService.Domain.Convenios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using System.Text.Json;
+using CreditoConsignado.HttpService.Domain.Propostas;
 
 namespace CreditoConsignado.HttpService.Domain;
 
 public class PropostasDbContext : DbContext
 {
     public PropostasDbContext(DbContextOptions<PropostasDbContext> options) : base(options) { }
+
+    public DbSet<Agente> Agentes { get; set; }
+    public DbSet<Convenio> Convenios { get; set; }
+    public DbSet<Proposta> Propostas { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+    }
 }
 
 public class MigrationsDbContextFactory : IDesignTimeDbContextFactory<PropostasDbContext>
