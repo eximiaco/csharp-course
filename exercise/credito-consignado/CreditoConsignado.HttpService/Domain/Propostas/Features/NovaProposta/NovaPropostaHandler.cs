@@ -24,19 +24,26 @@ public class NovaPropostaHandler(
         if(await propostaRepository.ProponentePossuiPropostasAbertas(command.Proponente.Cpf, cancellationToken))
             return Result.Failure<int>("Este proponente possui propostas em aberto");
 
+        var bloqueioCpf = await propostaRepository.ObterBloqueiDeCpf(command.Proponente.Cpf, cancellationToken);
+        
         var proponente = new Proponente(
             command.Proponente.Cpf,
             new Telefone("", command.Proponente.Telefone),
-            new Endereco("", "", "", "", ""));
+            new Endereco("", "", "", "", ""),
+            bloqueioCpf);
 
+        var credito = new CreditoSolicitado(command.ValorSolicitado, command.QuantidadeParcelas);
+        
         var listaUfParaAssinatura = await propostaRepository.ObterUFsDeAssinaturaHibrida(cancellationToken);
         var tipoAssinatura = tipoAssinaturaService.ObterTipoAssinatura(
             proponente,
             listaUfParaAssinatura.ToList());
-
+        
+        var regrasCriacaoProposta = await propostaRepository.ObterRegrasCriacaoNovaProposta(command.Proponente.Cpf, cancellationToken);
+        
         var id = await propostaRepository.ObterProximoNumeroDeProposta(cancellationToken);
         
-        var proposta = Proposta.Criar(id, proponente, tipoAssinatura);
+        var proposta = Proposta.Criar(id, proponente, credito, tipoAssinatura, regrasCriacaoProposta);
         if(proposta.IsFailure)
             return Result.Failure<int>(proposta.Error);
         

@@ -1,3 +1,4 @@
+using CreditoConsignado.HttpService.Domain.Propostas.RegrasCriacao;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreditoConsignado.HttpService.Domain.Propostas;
@@ -24,5 +25,15 @@ public sealed class PropostaRepository(PropostasDbContext propostasDbContext)
     public Task<int> ObterProximoNumeroDeProposta(CancellationToken cancellationToken)
     {
         return Task.FromResult(0);
+    }
+
+    public async Task<IEnumerable<IRegraCriacaoProposta>> ObterRegrasCriacaoNovaProposta(string convenioId, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> ObterBloqueiDeCpf(string cpf, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }
