@@ -1,7 +1,9 @@
 using System.Reflection;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+using EscolaEximia.HttpService.Dominio;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Aplicacao;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
 using EscolaEximia.HttpService.infraestrutura;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,14 +24,16 @@ try
         .AddWorkersServices(builder.Configuration)
         .AddOptions()
         .AddCaching()
+        .AddLogs(builder.Configuration, serviceName!)
         .AddCustomMvc();
-
+    
+    builder.Services.AddDbContext<InscricoesDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("InscricoesConnection")));
+    builder.Services.AddScoped<InscricoesRepositorio>();
+    builder.Services.AddScoped<RealizarInscricaoHandler>();
+    builder.Services.AddHostedService<DatabaseInitializer>();
+    
     builder.Host.UseSerilog();
-    // builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
-    // {
-    //     builder.RegisterModule(new ApplicationModule());
-    // });
-    // builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
     
     var app = builder.Build();
     app.UseHealthChecks("/health-ready");

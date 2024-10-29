@@ -1,7 +1,11 @@
-using EscolaEximia.HttpService.Dominio.Entidades;
+using EscolaEximia.HttpService.Dominio.Inscricoes;
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra.Mapeamento;
+using EscolaEximia.HttpService.Dominio.Regras;
+using EscolaEximia.HttpService.Dominio.Regras.infra.Mapeamento;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
-namespace EscolaEximia.HttpService.Dominio.Infraestrutura;
+namespace EscolaEximia.HttpService.Dominio;
 
 public class InscricoesDbContext: DbContext
 {
@@ -12,6 +16,7 @@ public class InscricoesDbContext: DbContext
     public DbSet<Inscricao> Inscricoes { get; set; }
     public DbSet<Turma> Turmas { get; set; }
     public DbSet<Aluno> Alunos { get; set; }
+    public DbSet<RegraPorTurma> RegrasPorTurma { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
@@ -42,7 +47,28 @@ public class InscricoesDbContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.ApplyConfiguration(new InscricoesConfigurations());
-        //modelBuilder.ApplyConfiguration(new TurmasConfigurations());
+        modelBuilder.ApplyConfiguration(new InscricaoConfiguration());
+        modelBuilder.ApplyConfiguration(new TurmaConfiguration());
+        modelBuilder.ApplyConfiguration(new AlunoConfiguration());
+        modelBuilder.ApplyConfiguration(new RegraConfiguration());
+    }
+}
+
+public class MigrationsDbContextFactory : IDesignTimeDbContextFactory<InscricoesDbContext>
+{
+    public InscricoesDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<InscricoesDbContext>();
+        var connectionString = "Server=localhost;Database=InscricoesDB;User Id=sa;Password=SenhaForte123!;TrustServerCertificate=True;";
+        
+        optionsBuilder.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
+
+        return new InscricoesDbContext(optionsBuilder.Options);
     }
 }
