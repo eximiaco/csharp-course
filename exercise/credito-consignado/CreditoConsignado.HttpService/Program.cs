@@ -1,7 +1,7 @@
 using System.Reflection;
-using CreditoConsignado.HttpService.Domain;
 using CreditoConsignado.HttpService.Domain.Propostas;
 using CreditoConsignado.HttpService.Domain.Propostas.Features.NovaProposta;
+using CreditoConsignado.HttpService.Domain.SeedWork;
 using CreditoConsignado.HttpService.Warmup;
 using Microsoft.EntityFrameworkCore;
 using Serilog;

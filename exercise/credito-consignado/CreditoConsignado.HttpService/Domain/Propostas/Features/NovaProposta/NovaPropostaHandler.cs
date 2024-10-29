@@ -11,21 +11,20 @@ public class NovaPropostaHandler(
     PropostaRepository propostaRepository,
     TipoAssinaturaService tipoAssinaturaService)
 {
-    public async Task<Result<int>> Executar(NovaPropostaCommand command, CancellationToken cancellationToken)
+    public async Task<Result<int>> ExecutarAsync(NovaPropostaCommand command, CancellationToken cancellationToken)
     {
-        var agente = await agentesRepository.Obter(command.AgenteId, cancellationToken);
+        var agente = await agentesRepository.ObterAsync(command.AgenteId, cancellationToken).ConfigureAwait(false);
         if (agente.HasNoValue)
-            return Result.Failure<int>("Agente inválido");
+            return Result.Failure<int>("Agente inválido.");
 
-        var convenio = await conveniosRepository.Obter(command.ConveniadaId, cancellationToken);
+        var convenio = await conveniosRepository.ObterAsync(command.ConveniadaId, cancellationToken).ConfigureAwait(false);
         if (convenio.HasNoValue)
-            return Result.Failure<int>("Convênio inválido");
+            return Result.Failure<int>("Convênio inválido.");
 
-        if(await propostaRepository.ProponentePossuiPropostasAbertas(command.Proponente.Cpf, cancellationToken))
-            return Result.Failure<int>("Este proponente possui propostas em aberto");
+        if(await propostaRepository.ProponentePossuiPropostasAbertasAsync(command.Proponente.Cpf, cancellationToken).ConfigureAwait(false))
+            return Result.Failure<int>("Este proponente possui propostas em aberto.");
 
-        var bloqueioCpf = await propostaRepository.ObterBloqueiDeCpf(command.Proponente.Cpf, cancellationToken);
-        
+        var bloqueioCpf = await propostaRepository.ObterBloqueioDeCpfAsync(command.Proponente.Cpf, cancellationToken).ConfigureAwait(false);        
         var proponente = new Proponente(
             command.Proponente.Cpf,
             new Telefone("", command.Proponente.Telefone),
@@ -34,14 +33,10 @@ public class NovaPropostaHandler(
 
         var credito = new CreditoSolicitado(command.ValorSolicitado, command.QuantidadeParcelas);
         
-        var listaUfParaAssinatura = await propostaRepository.ObterUFsDeAssinaturaHibrida(cancellationToken);
-        var tipoAssinatura = tipoAssinaturaService.ObterTipoAssinatura(
-            proponente,
-            listaUfParaAssinatura.ToList());
-        
-        var regrasCriacaoProposta = await propostaRepository.ObterRegrasCriacaoNovaProposta(command.Proponente.Cpf, cancellationToken);
-        
-        var id = await propostaRepository.ObterProximoNumeroDeProposta(cancellationToken);
+        var listaUfParaAssinatura = await propostaRepository.ObterUFsDeAssinaturaHibridaAsync(cancellationToken).ConfigureAwait(false);
+        var tipoAssinatura = tipoAssinaturaService.ObterTipoAssinatura(proponente, listaUfParaAssinatura.ToList());        
+        var regrasCriacaoProposta = await propostaRepository.ObterRegrasCriacaoNovaPropostaAsync(command.Proponente.Cpf, cancellationToken).ConfigureAwait(false);    
+        var id = await propostaRepository.ObterProximoNumeroDeProposta(cancellationToken).ConfigureAwait(false);
         
         var proposta = Proposta.Criar(id, proponente, credito, tipoAssinatura, regrasCriacaoProposta);
         if(proposta.IsFailure)

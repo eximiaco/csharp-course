@@ -1,15 +1,19 @@
 using CreditoConsignado.HttpService.Domain.Propostas.RegrasCriacao;
+using CreditoConsignado.HttpService.Domain.SeedWork;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreditoConsignado.HttpService.Domain.Propostas;
 
 public sealed class PropostaRepository(PropostasDbContext propostasDbContext)
 {
-    public async Task<Boolean> ProponentePossuiPropostasAbertas(string cpf, CancellationToken cancellationToken)
+    public async Task<bool> ProponentePossuiPropostasAbertasAsync(string cpf, CancellationToken cancellationToken)
     {
-        return await propostasDbContext.Propostas
+        return await propostasDbContext
+            .Propostas
             .Where(c=> c.Proponente.Cpf == cpf)
-            .AnyAsync(cancellationToken);
+            .AnyAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task Adicionar(Proposta proposta, CancellationToken cancellationToken)
@@ -17,7 +21,7 @@ public sealed class PropostaRepository(PropostasDbContext propostasDbContext)
         await propostasDbContext.Propostas.AddAsync(proposta, cancellationToken);
     }
 
-    public async Task<IEnumerable<string>> ObterUFsDeAssinaturaHibrida(CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> ObterUFsDeAssinaturaHibridaAsync(CancellationToken cancellationToken)
     {
         return new List<string>();
     }
@@ -27,12 +31,16 @@ public sealed class PropostaRepository(PropostasDbContext propostasDbContext)
         return Task.FromResult(0);
     }
 
-    public async Task<IEnumerable<IRegraCriacaoProposta>> ObterRegrasCriacaoNovaProposta(string convenioId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IRegraCriacaoProposta>> ObterRegrasCriacaoNovaPropostaAsync(string convenioId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var sql = @"SELECT Regra
+                    FROM RegrasCriacaoProposta";
+
+        var regras = await propostasDbContext.Database.GetDbConnection().QueryAsync<string>(sql).WaitAsync(cancellationToken).ConfigureAwait(false);
+        return regras.Select(r => r.ToNameTypeObject<IRegraCriacaoProposta>());
     }
 
-    public async Task<bool> ObterBloqueiDeCpf(string cpf, CancellationToken cancellationToken)
+    public async Task<bool> ObterBloqueioDeCpfAsync(string cpf, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

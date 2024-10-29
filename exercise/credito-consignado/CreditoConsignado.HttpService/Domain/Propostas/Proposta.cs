@@ -15,18 +15,18 @@ public sealed class Proposta : Entity<int>
     public Proponente Proponente { get; }
     public string TipoAssinatura { get; }
     public CreditoSolicitado Credito { get; }
-    
+
     public static Result<Proposta> Criar(
-        int id, 
-        Proponente proponente, 
+        int id,
+        Proponente proponente,
         CreditoSolicitado credito,
-        string tipoAssinatura, 
+        string tipoAssinatura,
         IEnumerable<IRegraCriacaoProposta> regrasCriacao)
     {
         foreach (var regra in regrasCriacao)
         {
             var resultado = regra.Validar(proponente, credito);
-            if(resultado.IsFailure)
+            if (resultado.IsFailure)
                 return Result.Failure<Proposta>(resultado.Error);
         }
         return new Proposta(id, proponente, tipoAssinatura, credito);

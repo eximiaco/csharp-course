@@ -1,11 +1,15 @@
+using CreditoConsignado.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
 
 namespace CreditoConsignado.HttpService.Domain.Convenios;
 
 public sealed class ConveniosRepository(PropostasDbContext propostasDbContext)
 {
-    public async Task<Maybe<Convenio>> Obter(string id, CancellationToken cancellationToken = default)
+    public async Task<Maybe<Convenio>> ObterAsync(string id, CancellationToken cancellationToken = default)
     {
-        return (await propostasDbContext.Convenios.FindAsync(id, cancellationToken ))!;
+        var convenio = await propostasDbContext.Convenios.FindAsync(id, cancellationToken).ConfigureAwait(false);
+        if (convenio is null)
+            return Maybe.None;
+        return convenio;
     }
 }

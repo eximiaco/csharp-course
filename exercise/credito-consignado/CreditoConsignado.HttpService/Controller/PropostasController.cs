@@ -43,7 +43,7 @@ public class PropostasController : ControllerBase
                 input.Rendimento)
         );
 
-        var result = await handler.Executar(command, cancellationToken);
+        var result = await handler.ExecutarAsync(command, cancellationToken);
 
         return result.IsSuccess 
             ? Ok(result.Value) 

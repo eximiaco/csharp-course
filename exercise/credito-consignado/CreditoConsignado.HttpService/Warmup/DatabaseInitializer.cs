@@ -1,4 +1,4 @@
-using CreditoConsignado.HttpService.Domain;
+using CreditoConsignado.HttpService.Domain.SeedWork;
 
 namespace CreditoConsignado.HttpService.Warmup;
 

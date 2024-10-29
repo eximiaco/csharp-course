@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using System.Text.Json;
 using CreditoConsignado.HttpService.Domain.Propostas;
 
-namespace CreditoConsignado.HttpService.Domain;
+namespace CreditoConsignado.HttpService.Domain.SeedWork;
 
 public class PropostasDbContext : DbContext
 {
@@ -26,7 +26,7 @@ public class MigrationsDbContextFactory : IDesignTimeDbContextFactory<PropostasD
     {
         var optionsBuilder = new DbContextOptionsBuilder<PropostasDbContext>();
         var connectionString = "Server=localhost;Database=PropostasDB;User Id=sa;Password=SenhaForte123!;TrustServerCertificate=True;";
-        
+
         optionsBuilder.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
         {
             sqlOptions.EnableRetryOnFailure(
