@@ -7,12 +7,16 @@ namespace CreditoConsignado.HttpService.Domain.Propostas;
 
 public sealed class Proposta : Entity<int>
 {
+    private readonly List<Anexo> _anexos;
+
     public string ConvenioId { get; }
     public string AgenteId { get; }
     public Proponente Proponente { get; }
     public string TipoAssinatura { get; }
     public CreditoSolicitado Credito { get; }
+    public IReadOnlyCollection<Anexo> Anexos => _anexos.AsReadOnly();
 
+    private Proposta(){}
     private Proposta(
         int id, 
         string convenioId,
@@ -26,6 +30,24 @@ public sealed class Proposta : Entity<int>
         Proponente = proponente;
         TipoAssinatura = tipoAssinatura;
         Credito = credito;
+        _anexos = new List<Anexo>();
+    }
+
+    public Result AdicionarAnexo(string path)
+    {
+        var anexo = new Anexo(Guid.NewGuid(), path, false);
+        _anexos.Add(anexo);
+        return Result.Success();
+    }
+
+    public Result RemoverAnexo(Guid anexoId)
+    {
+        var anexo = _anexos.FirstOrDefault(a => a.Id == anexoId);
+        if (anexo == null)
+            return Result.Failure("Anexo não encontrado");
+
+        _anexos.Remove(anexo);
+        return Result.Success();
     }
 
     public static Result<Proposta> Criar(

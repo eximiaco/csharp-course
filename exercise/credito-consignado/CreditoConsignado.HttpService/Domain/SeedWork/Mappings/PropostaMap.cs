@@ -35,6 +35,18 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
             .OnDelete(DeleteBehavior.Restrict);
         #endregion
         
+        #region Mapeamento de Anexos
+        builder.HasMany(p => p.Anexos)
+            .WithOne()
+            .HasForeignKey("PropostaId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(p => p.Anexos)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasField("_anexos");
+        #endregion
+
         builder.OwnsOne(p => p.Proponente, proponente =>
         {
             proponente.Property(p => p.Cpf).HasColumnName("ProponenteCpf").HasColumnType("varchar(20)").IsRequired();

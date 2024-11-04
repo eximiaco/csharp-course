@@ -1,6 +1,7 @@
 using CreditoConsignado.HttpService.Domain.Agentes;
 using CreditoConsignado.HttpService.Domain.Convenios;
 using CreditoConsignado.HttpService.Domain.Propostas.Services;
+using CreditoConsignado.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
 
 namespace CreditoConsignado.HttpService.Domain.Propostas.Features.NovaProposta;
@@ -9,7 +10,8 @@ public class NovaPropostaHandler(
     AgentesRepository agentesRepository,
     ConveniosRepository conveniosRepository,
     PropostaRepository propostaRepository,
-    TipoAssinaturaService tipoAssinaturaService)
+    TipoAssinaturaService tipoAssinaturaService,
+    UnitOfWork unitOfWork)
 {
     public async Task<Result<int>> ExecutarAsync(NovaPropostaCommand command, CancellationToken cancellationToken)
     {
@@ -50,6 +52,9 @@ public class NovaPropostaHandler(
             return Result.Failure<int>(proposta.Error);
         
         await propostaRepository.Adicionar(proposta.Value, cancellationToken);
+        
+        await unitOfWork.CommitAsync(cancellationToken);
+        
         return Result.Success(proposta.Value.Id);
     }
 }

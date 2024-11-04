@@ -1,5 +1,6 @@
 using CreditoConsignado.HttpService.Domain.Propostas.RegrasCriacao;
 using CreditoConsignado.HttpService.Domain.SeedWork;
+using CSharpFunctionalExtensions;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,5 +44,13 @@ public sealed class PropostaRepository(PropostasDbContext propostasDbContext)
     public async Task<bool> ObterBloqueioDeCpfAsync(string cpf, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<Maybe<Proposta>> Obter(int id, CancellationToken cancellationToken)
+    {
+        return await propostasDbContext
+            .Propostas
+            .Include(c=> c.Anexos)
+            .FirstAsync(c=> c.Id == id, cancellationToken);
     }
 }
