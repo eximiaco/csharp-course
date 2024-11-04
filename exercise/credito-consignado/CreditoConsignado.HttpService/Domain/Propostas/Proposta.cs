@@ -7,32 +7,26 @@ namespace CreditoConsignado.HttpService.Domain.Propostas;
 
 public sealed class Proposta : Entity<int>
 {
-    public Proposta(
-        int id, 
-        Convenio convenio,
-        Agente agente,
-        Proponente proponente, 
-        string tipoAssinatura, 
-        CreditoSolicitado credito) : base(id)
-    {
-        Convenio = convenio;
-        ConvenioId = convenio.Id;
-        Agente = agente;
-        AgenteId = agente.Id;
-        Proponente = proponente;
-        TipoAssinatura = tipoAssinatura;
-        Credito = credito;
-    }
-
     public string ConvenioId { get; }
     public string AgenteId { get; }
     public Proponente Proponente { get; }
     public string TipoAssinatura { get; }
     public CreditoSolicitado Credito { get; }
 
-    // Propriedades de navegação
-    public Convenio Convenio { get; }
-    public Agente Agente { get; }
+    private Proposta(
+        int id, 
+        string convenioId,
+        string agenteId,
+        Proponente proponente, 
+        string tipoAssinatura, 
+        CreditoSolicitado credito) : base(id)
+    {
+        ConvenioId = convenioId;
+        AgenteId = agenteId;
+        Proponente = proponente;
+        TipoAssinatura = tipoAssinatura;
+        Credito = credito;
+    }
 
     public static Result<Proposta> Criar(
         int id,
@@ -52,8 +46,8 @@ public sealed class Proposta : Entity<int>
         
         return Result.Success(new Proposta(
             id, 
-            convenio,
-            agente, 
+            convenio.Id,
+            agente.Id, 
             proponente, 
             tipoAssinatura, 
             credito));

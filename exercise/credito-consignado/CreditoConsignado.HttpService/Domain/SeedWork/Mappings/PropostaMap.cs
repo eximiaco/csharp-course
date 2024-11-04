@@ -1,4 +1,6 @@
-﻿using CreditoConsignado.HttpService.Domain.Propostas;
+﻿using CreditoConsignado.HttpService.Domain.Agentes;
+using CreditoConsignado.HttpService.Domain.Convenios;
+using CreditoConsignado.HttpService.Domain.Propostas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,12 +24,12 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
             .HasColumnType("varchar(36)")
             .IsRequired();
 
-        builder.HasOne(p => p.Convenio)
+        builder.HasOne<Convenio>()
             .WithMany()
             .HasForeignKey(p => p.ConvenioId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(p => p.Agente)
+        builder.HasOne<Agente>()
             .WithMany()
             .HasForeignKey(p => p.AgenteId)
             .OnDelete(DeleteBehavior.Restrict);
