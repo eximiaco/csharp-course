@@ -38,7 +38,14 @@ public class NovaPropostaHandler(
         var regrasCriacaoProposta = await propostaRepository.ObterRegrasCriacaoNovaPropostaAsync(command.Proponente.Cpf, cancellationToken).ConfigureAwait(false);    
         var id = await propostaRepository.ObterProximoNumeroDeProposta(cancellationToken).ConfigureAwait(false);
         
-        var proposta = Proposta.Criar(id, proponente, credito, tipoAssinatura, regrasCriacaoProposta);
+        var proposta = Proposta.Criar(
+            id,
+            convenio.Value,
+            agente.Value,
+            proponente,
+            credito,
+            tipoAssinatura,
+            regrasCriacaoProposta);
         if(proposta.IsFailure)
             return Result.Failure<int>(proposta.Error);
         

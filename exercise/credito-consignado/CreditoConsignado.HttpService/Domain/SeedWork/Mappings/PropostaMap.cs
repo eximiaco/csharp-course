@@ -13,6 +13,26 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
 
         builder.Property(p => p.TipoAssinatura).HasColumnType("varchar(15)").IsRequired();
 
+        #region Mapeamento de relacionamentos 1-N
+        builder.Property(p => p.ConvenioId)
+            .HasColumnType("varchar(36)")
+            .IsRequired();
+        
+        builder.Property(p => p.AgenteId)
+            .HasColumnType("varchar(36)")
+            .IsRequired();
+
+        builder.HasOne(p => p.Convenio)
+            .WithMany()
+            .HasForeignKey(p => p.ConvenioId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(p => p.Agente)
+            .WithMany()
+            .HasForeignKey(p => p.AgenteId)
+            .OnDelete(DeleteBehavior.Restrict);
+        #endregion
+        
         builder.OwnsOne(p => p.Proponente, proponente =>
         {
             proponente.Property(p => p.Cpf).HasColumnName("ProponenteCpf").HasColumnType("varchar(20)").IsRequired();
