@@ -13,6 +13,12 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
         builder.ToTable("Propostas");
         builder.HasKey(p => p.Id);
 
+        #region Controle de Concorrência
+        builder.Property(p => p.RowVersion)
+            .IsRowVersion()
+            .IsConcurrencyToken();
+        #endregion
+
         builder.Property(p => p.TipoAssinatura).HasColumnType("varchar(15)").IsRequired();
 
         #region Mapeamento de relacionamentos 1-N

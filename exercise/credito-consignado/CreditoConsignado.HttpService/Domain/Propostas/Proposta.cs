@@ -17,6 +17,7 @@ public sealed class Proposta : Entity<int>
     public CreditoSolicitado Credito { get; }
     public IReadOnlyCollection<Anexo> Anexos => _anexos.AsReadOnly();
     public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
+    public byte[] RowVersion { get; private set; }
 
     private Proposta(){}
     private Proposta(
@@ -34,6 +35,7 @@ public sealed class Proposta : Entity<int>
         Credito = credito;
         _anexos = new List<Anexo>();
         _tags = new List<Tag>();
+        RowVersion = Array.Empty<byte>();
     }
 
     public Result AdicionarAnexo(string path)
@@ -62,6 +64,11 @@ public sealed class Proposta : Entity<int>
         return Result.Success();
     }
 
+    public void SimularNovoValor(decimal commandValorSolicitado, int commandPropostaId)
+    {
+        throw new NotImplementedException();
+    }
+    
     public static Result<Proposta> Criar(
         int id,
         Convenio convenio,
