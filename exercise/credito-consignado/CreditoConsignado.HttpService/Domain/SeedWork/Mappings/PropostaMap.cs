@@ -47,6 +47,18 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
             .HasField("_anexos");
         #endregion
 
+        #region Mapeamento de Tags
+        builder.HasMany(p => p.Tags)
+            .WithOne()
+            .HasForeignKey(pt => pt.PropostaId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(p => p.Tags)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasField("_tags");
+        #endregion
+        
         builder.OwnsOne(p => p.Proponente, proponente =>
         {
             proponente.Property(p => p.Cpf).HasColumnName("ProponenteCpf").HasColumnType("varchar(20)").IsRequired();

@@ -15,10 +15,12 @@ public class PropostasDbContext : DbContext
     public DbSet<Agente> Agentes { get; set; }
     public DbSet<Convenio> Convenios { get; set; }
     public DbSet<Proposta> Propostas { get; set; }
+    public DbSet<Tag> Tags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PropostaMap());
+        modelBuilder.ApplyConfiguration(new PropostaTagMap());
         base.OnModelCreating(modelBuilder);
     }
 }
