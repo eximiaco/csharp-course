@@ -18,6 +18,8 @@ public sealed class Proposta : Entity<int>
     public IReadOnlyCollection<Anexo> Anexos => _anexos.AsReadOnly();
     public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
     public byte[] RowVersion { get; private set; }
+    public DateTime? DataExclusao { get; private set; }
+    public bool Excluido => DataExclusao.HasValue;
 
     private Proposta(){}
     private Proposta(
@@ -36,6 +38,7 @@ public sealed class Proposta : Entity<int>
         _anexos = new List<Anexo>();
         _tags = new List<Tag>();
         RowVersion = Array.Empty<byte>();
+        DataExclusao = null;
     }
 
     public Result AdicionarAnexo(string path)
@@ -92,6 +95,11 @@ public sealed class Proposta : Entity<int>
             proponente, 
             tipoAssinatura, 
             credito));
+    }
+
+    public void Excluir()
+    {
+        DataExclusao = DateTime.UtcNow;
     }
 }
 

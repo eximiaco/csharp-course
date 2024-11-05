@@ -106,5 +106,13 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
             credito.Property(c => c.Valor).HasColumnName("CreditoValor").HasColumnType("numeric(15,2)").IsRequired();
             credito.Property(c => c.Parcelamento).HasColumnName("CreditoParcelamento").HasColumnType("int").IsRequired();
         });
+
+        #region Soft Delete
+        builder.Property(p => p.DataExclusao)
+            .HasColumnType("datetime2")
+            .IsRequired(false);
+
+        builder.HasQueryFilter(p => p.DataExclusao == null);
+        #endregion
     }
 }
