@@ -4,6 +4,7 @@ public sealed class Tag : Entity<int>
 {
     public string Nome { get; }
     
+    private Tag() {}
     private Tag(int id, string nome) : base(id)
     {
         Nome = nome;

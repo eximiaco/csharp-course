@@ -49,10 +49,25 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
 
         #region Mapeamento de Tags
         builder.HasMany(p => p.Tags)
-            .WithOne()
-            .HasForeignKey(pt => pt.PropostaId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .WithMany()
+            .UsingEntity<Dictionary<string, object>>(
+                "PropostasTags",
+                x => x
+                    .HasOne<Tag>()
+                    .WithMany()
+                    .HasForeignKey("TagId")
+                    .OnDelete(DeleteBehavior.Restrict),
+                x => x
+                    .HasOne<Proposta>()
+                    .WithMany()
+                    .HasForeignKey("PropostaId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                x =>
+                {
+                    x.HasKey("PropostaId", "TagId");
+                    x.Property<DateTime>("DataVinculo")
+                        .HasDefaultValueSql("GETUTCDATE()");
+                });
 
         builder.Navigation(p => p.Tags)
             .UsePropertyAccessMode(PropertyAccessMode.Field)

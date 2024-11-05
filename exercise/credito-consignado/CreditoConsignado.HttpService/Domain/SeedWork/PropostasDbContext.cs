@@ -20,7 +20,6 @@ public class PropostasDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PropostaMap());
-        modelBuilder.ApplyConfiguration(new PropostaTagMap());
         base.OnModelCreating(modelBuilder);
     }
 }

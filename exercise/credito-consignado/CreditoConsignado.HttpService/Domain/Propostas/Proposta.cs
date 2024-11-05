@@ -8,7 +8,7 @@ namespace CreditoConsignado.HttpService.Domain.Propostas;
 public sealed class Proposta : Entity<int>
 {
     private readonly List<Anexo> _anexos;
-    private readonly List<PropostaTag> _tags;
+    private readonly List<Tag> _tags;
 
     public string ConvenioId { get; }
     public string AgenteId { get; }
@@ -16,7 +16,7 @@ public sealed class Proposta : Entity<int>
     public string TipoAssinatura { get; }
     public CreditoSolicitado Credito { get; }
     public IReadOnlyCollection<Anexo> Anexos => _anexos.AsReadOnly();
-    public IReadOnlyCollection<PropostaTag> Tags => _tags.AsReadOnly();
+    public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
 
     private Proposta(){}
     private Proposta(
@@ -33,7 +33,7 @@ public sealed class Proposta : Entity<int>
         TipoAssinatura = tipoAssinatura;
         Credito = credito;
         _anexos = new List<Anexo>();
-        _tags = new List<PropostaTag>();
+        _tags = new List<Tag>();
     }
 
     public Result AdicionarAnexo(string path)
@@ -55,11 +55,10 @@ public sealed class Proposta : Entity<int>
 
     public Result AdicionarTag(Tag tag)
     {
-        if (_tags.Any(t => t.TagId == tag.Id))
+        if (_tags.Any(t => t.Id == tag.Id))
             return Result.Failure("Tag já adicionada à proposta");
 
-        var propostaTag = PropostaTag.Criar(this.Id, tag.Id);
-        _tags.Add(propostaTag);
+        _tags.Add(tag);
         return Result.Success();
     }
 
