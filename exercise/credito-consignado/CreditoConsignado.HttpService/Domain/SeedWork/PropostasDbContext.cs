@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.Text.Json;
 using CreditoConsignado.HttpService.Domain.Propostas;
+using CreditoConsignado.HttpService.Domain.Propostas.RegrasCriacao;
 using CreditoConsignado.HttpService.Domain.SeedWork.Mappings;
 
 namespace CreditoConsignado.HttpService.Domain.SeedWork;
@@ -16,10 +17,12 @@ public class PropostasDbContext : DbContext
     public DbSet<Convenio> Convenios { get; set; }
     public DbSet<Proposta> Propostas { get; set; }
     public DbSet<Tag> Tags { get; set; }
+    public DbSet<RegraPorConvenio> RegrasPorConvenio { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PropostaMap());
+        modelBuilder.ApplyConfiguration(new RegraPorConvenioMap());
         base.OnModelCreating(modelBuilder);
     }
 }

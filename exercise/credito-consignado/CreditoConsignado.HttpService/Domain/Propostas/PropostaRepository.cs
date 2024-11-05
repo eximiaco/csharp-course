@@ -32,13 +32,16 @@ public sealed class PropostaRepository(PropostasDbContext propostasDbContext)
         return Task.FromResult(0);
     }
 
-    public async Task<IEnumerable<IRegraCriacaoProposta>> ObterRegrasCriacaoNovaPropostaAsync(string convenioId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IRegraCriacaoProposta>> ObterRegrasCriacaoNovaPropostaAsync(
+        string convenioId, 
+        CancellationToken cancellationToken)
     {
-        var sql = @"SELECT Regra
-                    FROM RegrasCriacaoProposta";
+        var regras = await propostasDbContext.RegrasPorConvenio
+            .Where(r => r.ConvenioId == convenioId && r.Ativa)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
 
-        var regras = await propostasDbContext.Database.GetDbConnection().QueryAsync<string>(sql).WaitAsync(cancellationToken).ConfigureAwait(false);
-        return regras.Select(r => r.ToNameTypeObject<IRegraCriacaoProposta>());
+        return regras.Select(c=> c.Regra);
     }
 
     public async Task<bool> ObterBloqueioDeCpfAsync(string cpf, CancellationToken cancellationToken)
