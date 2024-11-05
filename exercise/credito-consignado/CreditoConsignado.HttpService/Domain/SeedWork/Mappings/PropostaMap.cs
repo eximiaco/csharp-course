@@ -1,6 +1,8 @@
-﻿using CreditoConsignado.HttpService.Domain.Agentes;
+﻿using System.Text.Json;
+using CreditoConsignado.HttpService.Domain.Agentes;
 using CreditoConsignado.HttpService.Domain.Convenios;
 using CreditoConsignado.HttpService.Domain.Propostas;
+using CreditoConsignado.HttpService.Domain.Propostas.RegrasCriacao;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,13 +15,14 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
         builder.ToTable("Propostas");
         builder.HasKey(p => p.Id);
 
+        builder.Property(p => p.TipoAssinatura).HasColumnType("varchar(15)").IsRequired();
+        
         #region Controle de Concorrência
         builder.Property(p => p.RowVersion)
             .IsRowVersion()
             .IsConcurrencyToken();
         #endregion
-
-        builder.Property(p => p.TipoAssinatura).HasColumnType("varchar(15)").IsRequired();
+        
 
         #region Mapeamento de relacionamentos 1-N
         builder.Property(p => p.ConvenioId)
@@ -114,5 +117,15 @@ public class PropostaMap : IEntityTypeConfiguration<Proposta>
 
         builder.HasQueryFilter(p => p.DataExclusao == null);
         #endregion
+
+        builder.Property<ISituacaoProposta>("_situacao")
+            .HasColumnType("varchar(max)")
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, new JsonSerializerOptions { WriteIndented = true }),
+                v => JsonSerializer.Deserialize<ISituacaoProposta>(v, new JsonSerializerOptions { WriteIndented = true })!)
+            .IsRequired();
+
+        builder.Navigation("_situacao")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

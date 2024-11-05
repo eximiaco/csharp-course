@@ -1,8 +1,10 @@
 using CreditoConsignado.HttpService.Domain.Agentes;
 using CreditoConsignado.HttpService.Domain.Convenios;
+using CreditoConsignado.HttpService.Domain.Propostas.Features.FluxoAprovacaoProposta;
 using CreditoConsignado.HttpService.Domain.Propostas.Services;
 using CreditoConsignado.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
+using WorkflowCore.Interface;
 
 namespace CreditoConsignado.HttpService.Domain.Propostas.Features.NovaProposta;
 
@@ -11,7 +13,8 @@ public class NovaPropostaHandler(
     ConveniosRepository conveniosRepository,
     PropostaRepository propostaRepository,
     TipoAssinaturaService tipoAssinaturaService,
-    UnitOfWork unitOfWork)
+    UnitOfWork unitOfWork,
+    IWorkflowHost workflowHost)
 {
     public async Task<Result<int>> ExecutarAsync(NovaPropostaCommand command, CancellationToken cancellationToken)
     {
@@ -54,6 +57,14 @@ public class NovaPropostaHandler(
         await propostaRepository.Adicionar(proposta.Value, cancellationToken);
         
         await unitOfWork.CommitAsync(cancellationToken);
+        
+        // Inicia o workflow de análise da proposta
+        await workflowHost.StartWorkflow(
+            "PropostaWorkflow", 
+            new PropostaWorkflowData 
+            { 
+                PropostaId = proposta.Value.Id 
+            });
         
         return Result.Success(proposta.Value.Id);
     }

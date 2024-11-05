@@ -9,6 +9,7 @@ public sealed class Proposta : Entity<int>
 {
     private readonly List<Anexo> _anexos;
     private readonly List<Tag> _tags;
+    private ISituacaoProposta _situacao;
 
     public string ConvenioId { get; }
     public string AgenteId { get; }
@@ -20,6 +21,7 @@ public sealed class Proposta : Entity<int>
     public byte[] RowVersion { get; private set; }
     public DateTime? DataExclusao { get; private set; }
     public bool Excluido => DataExclusao.HasValue;
+    public string Situacao => _situacao.Nome;
 
     private Proposta(){}
     private Proposta(
@@ -39,6 +41,7 @@ public sealed class Proposta : Entity<int>
         _tags = new List<Tag>();
         RowVersion = Array.Empty<byte>();
         DataExclusao = null;
+        _situacao = new EmAnalise(this);
     }
 
     public Result AdicionarAnexo(string path)
@@ -101,6 +104,20 @@ public sealed class Proposta : Entity<int>
     {
         DataExclusao = DateTime.UtcNow;
     }
+
+    internal void AlterarSituacao(ISituacaoProposta novaSituacao)
+    {
+        _situacao = novaSituacao;
+    }
+
+    public Result AdicionarPendencia()
+        => _situacao.AdicionarPendencia();
+
+    public Result Aprovar()
+        => _situacao.Aprovar();
+
+    public Result Reprovar()
+        => _situacao.Reprovar();
 }
 
 public record Proponente(string Cpf, Telefone Contato, Endereco Residencial, bool CpfBloqueado);
