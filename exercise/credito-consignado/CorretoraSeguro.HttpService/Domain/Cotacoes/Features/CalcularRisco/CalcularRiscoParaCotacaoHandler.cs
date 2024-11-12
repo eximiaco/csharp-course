@@ -3,36 +3,25 @@ using CorretoraSeguro.HttpService.Domain.Sinistros;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco;
 
-public class CalcularRiscoParaCotacaoHandler
+public class CalcularRiscoParaCotacaoHandler(
+    PropostasDbContext dbContext,
+    CalculadoraRisco calculadora,
+    IHistoricoAcidentesService historicoService)
 {
-    private readonly PropostasDbContext _dbContext;
-    private readonly CalculadoraRisco _calculadora;
-    private readonly IHistoricoAcidentesService _historicoService;
-
-    public CalcularRiscoParaCotacaoHandler(
-        PropostasDbContext dbContext,
-        CalculadoraRisco calculadora,
-        IHistoricoAcidentesService historicoService)
-    {
-        _dbContext = dbContext;
-        _calculadora = calculadora;
-        _historicoService = historicoService;
-    }
-
     public async Task ExecuteAsync(CalcularRiscoParaCotacaoCommand command, CancellationToken cancellationToken = default)
     {
-        var cotacao = await _dbContext.Cotacoes
+        var cotacao = await dbContext.Cotacoes
             .FindAsync(command.CotacaoId, cancellationToken);
 
-        var historico = await _historicoService
+        var historico = await historicoService
             .ObterHistorico(cotacao.Condutor.Cpf);
 
-        var nivelRisco = _calculadora.Calcular(
+        var nivelRisco = calculadora.Calcular(
             cotacao.Condutor.DataNascimento,
             historico,
             cotacao.Condutor.Residencia.UF);
 
         cotacao.AtualizarRisco(nivelRisco);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 } 

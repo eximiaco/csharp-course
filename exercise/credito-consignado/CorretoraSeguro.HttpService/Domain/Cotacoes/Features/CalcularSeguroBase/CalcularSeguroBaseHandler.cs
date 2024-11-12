@@ -4,27 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularSeguroBase;
 
-public class CalcularSeguroBaseHandler
+public class CalcularSeguroBaseHandler(
+    PropostasDbContext dbContext,
+    IFipeService fipeService)
 {
-    private readonly PropostasDbContext _dbContext;
-    private readonly IFipeService _fipeService;
-
-    public CalcularSeguroBaseHandler(
-        PropostasDbContext dbContext,
-        IFipeService fipeService)
-    {
-        _dbContext = dbContext;
-        _fipeService = fipeService;
-    }
-
     public async Task ExecuteAsync(CalcularSeguroBaseCommand command, CancellationToken cancellationToken = default)
     {
-        var cotacao = await _dbContext.Cotacoes
+        var cotacao = await dbContext.Cotacoes
             .Include(c => c.Veiculo)
             .Include(c=> c.Coberturas)
             .FirstOrDefaultAsync(c=> c.Id == command.CotacaoId, cancellationToken);
 
-        var valorMercado = await _fipeService.ObterValorAsync(
+        var valorMercado = await fipeService.ObterValorAsync(
             cotacao.Veiculo.Marca,
             cotacao.Veiculo.Modelo,
             cotacao.Veiculo.Ano);
@@ -34,6 +25,6 @@ public class CalcularSeguroBaseHandler
             cotacao.AdicionarCobertura(tipo, valorMercado);
         }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 } 
