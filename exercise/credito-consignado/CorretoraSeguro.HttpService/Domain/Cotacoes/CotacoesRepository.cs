@@ -14,12 +14,16 @@ public class CotacoesRepository(PropostasDbContext PropostasDbContext)
             .ConfigureAwait(false);
     }
 
-    public async Task<Maybe<Cotacao>> ObterPorId(Guid id)
+    public async Task<Maybe<Cotacao>> ObterPorIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var cotacao = await PropostasDbContext.Cotacoes
+        var cotacao = await PropostasDbContext
+            .Cotacoes
             .Include(x => x.Coberturas)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+            .ConfigureAwait(false);
 
-        return cotacao!;
+        if (cotacao is null)
+            return Maybe.None;
+        return cotacao;
     }
 }

@@ -18,7 +18,7 @@ public class EnviarEmailCotacaoStep : IStepBody
 
     public async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
     {
-        var cotacao = await _cotacaoRepository.ObterPorId(CotacaoId);
+        var cotacao = await _cotacaoRepository.ObterPorIdAsync(CotacaoId, CancellationToken.None);
            if(cotacao.HasNoValue) 
                throw new NotFoundException($"Cotação {CotacaoId} não encontrada");
         

@@ -1,41 +1,25 @@
-using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow;
 using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
 using WorkflowCore.Interface;
 
-namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.AprovarCotacao
+namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.AprovarCotacao;
+
+public class AprovarCotacaoHandler(CotacoesRepository cotacoesRepository, UnitOfWork unitOfWork, IWorkflowHost workflowHost)
 {
-    public class AprovarCotacaoHandler
+    public async Task<Result<string>> Handle(AprovarCotacaoCommand command, CancellationToken cancellationToken)
     {
-        private readonly PropostasDbContext _dbContext;
-        private readonly IWorkflowHost _workflowHost;
+        var cotacao = await cotacoesRepository.ObterPorIdAsync(command.CotacaoId, cancellationToken).ConfigureAwait(false);
+        if (cotacao.HasNoValue)
+            return Result.Failure<string>("Cotação não encontrada");
 
-        public AprovarCotacaoHandler(
-            PropostasDbContext dbContext,
-            IWorkflowHost workflowHost)
-        {
-            _dbContext = dbContext;
-            _workflowHost = workflowHost;
-        }
+        var resultadoAprovacao = cotacao.Value.Aprovar();
+        if (resultadoAprovacao.IsFailure)
+            return Result.Failure<string>(resultadoAprovacao.Error);
 
-        public async Task<Result<string>> Handle(Guid cotacaoId, CancellationToken cancellationToken)
-        {
-            var cotacao = await _dbContext.Cotacoes
-                .FindAsync(cotacaoId);
+        await unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
 
-            if (cotacao == null)
-                return Result.Failure<string>("Cotação não encontrada");
-
-            if (cotacao.Status != EStatusCotacao.AguardandoAprovacao)
-                return Result.Failure<string>("Cotação não está aguardando aprovação");
-
-            cotacao.Aprovar();
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            // Publicar evento do workflow
-            await _workflowHost.PublishEvent("cotacao-aprovada", cotacao.Id.ToString(), null);
-
-            return Result.Success("Cotação aprovada com sucesso");
-        }
+        // Publicar evento do workflow
+        await workflowHost.PublishEvent("cotacao-aprovada", cotacao.Value.Id.ToString(), null);
+        return Result.Success("Cotação aprovada com sucesso");
     }
-} 
+}

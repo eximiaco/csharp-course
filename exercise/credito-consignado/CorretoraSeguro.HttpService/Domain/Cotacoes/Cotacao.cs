@@ -82,10 +82,14 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             Status = EStatusCotacao.AguardandoAprovacao;
         }
 
-        public void Aprovar()
+        public Result Aprovar()
         {
+            if (Status != EStatusCotacao.AguardandoAprovacao)
+                return Result.Failure("Cotação não está aguardando aprovação.");
+
             Status = EStatusCotacao.Aprovada;
             DataAprovacao = DateTime.UtcNow;
+            return Result.Success();
         }
 
         public void Cancelar()

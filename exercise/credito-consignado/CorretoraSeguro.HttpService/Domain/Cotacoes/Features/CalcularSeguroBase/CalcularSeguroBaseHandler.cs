@@ -1,27 +1,23 @@
 using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CorretoraSeguro.HttpService.Domain.TabelaFipe;
-using Microsoft.EntityFrameworkCore;
+using WorkflowCore.Exceptions;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularSeguroBase;
 
-public class CalcularSeguroBaseHandler(
-    PropostasDbContext dbContext,
-    IFipeService fipeService)
+public class CalcularSeguroBaseHandler(CotacoesRepository cotacoesRepository, UnitOfWork unitOfWork, IFipeService fipeService)
 {
     public async Task ExecuteAsync(CalcularSeguroBaseCommand command, CancellationToken cancellationToken = default)
     {
-        var cotacao = await dbContext.Cotacoes
-            .Include(c => c.Veiculo)
-            .Include(c=> c.Coberturas)
-            .FirstOrDefaultAsync(c=> c.Id == command.CotacaoId, cancellationToken);
+        var cotacao = await cotacoesRepository.ObterPorIdAsync(command.CotacaoId, cancellationToken).ConfigureAwait(false);
+        if (cotacao.HasNoValue)
+            throw new NotFoundException("Cotação não encontrada.");
 
         var valorMercado = await fipeService.ObterValorAsync(
-            cotacao.Veiculo.Marca,
-            cotacao.Veiculo.Modelo,
-            cotacao.Veiculo.Ano);
+            cotacao.Value.Veiculo.Marca,
+            cotacao.Value.Veiculo.Modelo,
+            cotacao.Value.Veiculo.Ano).ConfigureAwait(false);
 
-        cotacao.AtualizarValorBase(valorMercado);
-
-        await dbContext.SaveChangesAsync(cancellationToken);
+        cotacao.Value.AtualizarValorBase(valorMercado);
+        await unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 } 

@@ -49,7 +49,7 @@ public class CotacoesController : ControllerBase
         [FromServices] AprovarCotacaoHandler handler,
         CancellationToken cancellationToken)
     {
-        var result = await handler.Handle(cotacaoId, cancellationToken);
+        var result = await handler.Handle(new AprovarCotacaoCommand(cotacaoId), cancellationToken);
         return result.IsSuccess 
             ? Ok(result.Value) 
             : BadRequest(result.Error);
