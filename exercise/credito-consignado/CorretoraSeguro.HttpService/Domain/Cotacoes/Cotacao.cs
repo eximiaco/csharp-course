@@ -1,3 +1,4 @@
+using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes
@@ -14,8 +15,8 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
         public DateTime DataCriacao { get; private set; }
         public DateTime? DataAprovacao { get; private set; }
 
-        private readonly List<Cobertura> _coberturas = new();
-        public IReadOnlyCollection<Cobertura> Coberturas => _coberturas.AsReadOnly();
+        private readonly List<CoberturaCalculada> _coberturas = new();
+        public IReadOnlyCollection<CoberturaCalculada> Coberturas => _coberturas.AsReadOnly();
 
         public record DadosVeiculo(
             string Marca,
@@ -45,7 +46,8 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
         private Cotacao(
             DadosVeiculo veiculo,
             DadosProprietario proprietario,
-            DadosCondutor condutor)
+            DadosCondutor condutor,
+            List<CoberturaCalculada> coberturas)
         {
             Id = Guid.NewGuid();
             Veiculo = veiculo;
@@ -53,14 +55,19 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             Condutor = condutor;
             Status = StatusCotacao.Nova;
             DataCriacao = DateTime.UtcNow;
+            _coberturas = coberturas;
         }
 
         public static Result<Cotacao> Criar(
             DadosVeiculo veiculo,
             DadosProprietario proprietario,
             DadosCondutor condutor,
-            List<string> coberturasSolicitadas)
+            IEnumerable<Cobertura> coberturas)
         {
+            var coberturasCalculadas = coberturas.Select(c => 
+                new CoberturaCalculada(c.Tipo, 0) // Iniciando com valor zero
+            ).ToList();
+
             if (veiculo is null)
                 return Result.Failure<Cotacao>("Veículo é obrigatório");
 
@@ -70,21 +77,14 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             if (condutor is null)
                 return Result.Failure<Cotacao>("Condutor é obrigatório");
 
-            if (coberturasSolicitadas is null || !coberturasSolicitadas.Any())
+            if (coberturasCalculadas is null || !coberturasCalculadas.Any())
                 return Result.Failure<Cotacao>("Pelo menos uma cobertura deve ser informada");
 
             var cotacao = new Cotacao(
                 veiculo,
                 proprietario,
-                condutor);
-
-            foreach (var coberturaSolicitada in coberturasSolicitadas)
-            {
-                if (!Enum.TryParse<TipoCobertura>(coberturaSolicitada, true, out var tipoCobertura))
-                    return Result.Failure<Cotacao>($"Tipo de cobertura inválida: {coberturaSolicitada}");
-
-                cotacao.AdicionarCobertura(tipoCobertura, 0); // Valor inicial 0, será calculado posteriormente
-            }
+                condutor,
+                coberturasCalculadas);
 
             return Result.Success(cotacao);
         }
@@ -95,10 +95,9 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             Status = StatusCotacao.RiscoCalculado;
         }
 
-        public void AtualizarValorBase(decimal valorBase)
+        public void AtualizarValorBase(decimal valorMercado)
         {
-            ValorBase = valorBase;
-            Status = StatusCotacao.ValorBaseCalculado;
+            ValorBase = Coberturas.Sum(cobertura => cobertura.CalcularValor(valorMercado));
         }
 
         public void AtualizarValorFinal(decimal valorFinal)
@@ -116,32 +115,6 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
         public void Cancelar()
         {
             Status = StatusCotacao.Cancelada;
-        }
-
-        public void AdicionarCobertura(TipoCobertura tipo, decimal valorMercado)
-        {
-            var valorCobertura = CalcularValorCobertura(tipo, valorMercado);
-            
-            var coberturaExistente = _coberturas.FirstOrDefault(c => c.Tipo == tipo);
-            if (coberturaExistente != null)
-            {
-                coberturaExistente.AtualizarValor(valorCobertura);
-                return;
-            }
-
-            var cobertura = new Cobertura(tipo, valorCobertura);
-            _coberturas.Add(cobertura);
-        }
-
-        private decimal CalcularValorCobertura(TipoCobertura tipo, decimal valorMercado)
-        {
-            return tipo switch
-            {
-                TipoCobertura.Basica => valorMercado * 0.03m,
-                TipoCobertura.Roubo => valorMercado * 0.05m,
-                TipoCobertura.Vidros => valorMercado * 0.02m,
-                _ => throw new ArgumentException("Tipo de cobertura inválido", nameof(tipo))
-            };
         }
     }
 

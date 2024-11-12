@@ -2,6 +2,7 @@ using CorretoraSeguro.HttpService.Controller;
 using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow;
 using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
+using Microsoft.EntityFrameworkCore;
 using WorkflowCore.Interface;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao
@@ -21,12 +22,19 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao
 
         public async Task<Result<Guid>> Handle(NovaCotacaoCommand command, CancellationToken cancellationToken)
         {
+            var coberturas = await _dbContext.Coberturas
+                .Where(c => command.Coberturas.Contains(c.Nome))
+                .ToListAsync(cancellationToken);
+
+            if (!coberturas.Any())
+                return Result.Failure<Guid>("Nenhuma cobertura válida encontrada");
+
             var cotacaoResult = Cotacao.Criar(
                 new Cotacao.DadosVeiculo(
                     command.Veiculo.Marca,
                     command.Veiculo.Modelo,
                     command.Veiculo.Ano),
-                new  Cotacao.DadosProprietario(
+                new Cotacao.DadosProprietario(
                     command.Proprietario.Cpf,
                     command.Proprietario.Nome,
                     command.Proprietario.DataNascimento,
@@ -41,7 +49,7 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao
                         command.Condutor.Residencia.Cep,
                         command.Condutor.Residencia.Cidade,
                         command.Condutor.Residencia.UF)),
-                command.Coberturas);
+                coberturas);
 
             if (cotacaoResult.IsFailure)
                 return Result.Failure<Guid>(cotacaoResult.Error);

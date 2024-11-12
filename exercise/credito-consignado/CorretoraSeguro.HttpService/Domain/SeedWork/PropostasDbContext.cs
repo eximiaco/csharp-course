@@ -8,7 +8,8 @@ public class PropostasDbContext : DbContext
 {
     public PropostasDbContext(DbContextOptions<PropostasDbContext> options) : base(options) { }
 
-public DbSet<Cotacao> Cotacoes { get; set; }
+    public DbSet<Cotacao> Cotacoes { get; set; }
+    public DbSet<Cobertura> Coberturas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -20,10 +20,7 @@ public class CalcularSeguroBaseHandler(
             cotacao.Veiculo.Modelo,
             cotacao.Veiculo.Ano);
 
-        foreach (var tipo in cotacao.Coberturas.Select(c => c.Tipo))
-        {
-            cotacao.AdicionarCobertura(tipo, valorMercado);
-        }
+        cotacao.AtualizarValorBase(valorMercado);
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
