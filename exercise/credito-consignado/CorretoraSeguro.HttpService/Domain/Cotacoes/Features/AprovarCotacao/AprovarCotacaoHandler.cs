@@ -32,8 +32,7 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.AprovarCotacao
             cotacao.Aprovar();
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            // Publicar evento do workflow
-            await _workflowHost.PublishEvent("cotacao-aprovada", cotacao.Id.ToString(), null);
+await _workflowHost.PublishEvent("AprovacaoCotacao", cotacaoId.ToString(), null);
 
             return Result.Success("Cotação aprovada com sucesso");
         }

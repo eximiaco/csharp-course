@@ -18,22 +18,25 @@ public class CotacaoWorkflow : IWorkflow<CotacaoData>
             .Then<CalcularValorFinalStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId)
             .Then<EnviarEmailCotacaoStep>()
+            .Input(step => step.CotacaoId, data => data.CotacaoId)
+            .Parallel()
+                .Do(then => then
+                    .StartWith<NoOpStep>()
+                    .WaitFor("AprovacaoCotacao", (data, context) => data.CotacaoId.ToString()))
+                .Do(then => then
+                    .StartWith<NoOpStep>()
+                    .Delay(data => TimeSpan.FromDays(5))
+                    .Then<CancelarCotacaoStep>()
+                    .Input(step => step.CotacaoId, data => data.CotacaoId))
+            .Join()
+                .CancelCondition(data => data.Aprovado, true)
+            .Then<GerarApoliceStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId);
-            // .Then<AguardarAprovacaoStep>()
-            // .OnTimeout(TimeSpan.FromDays(5), (data, context) => 
-            // {
-            //     context.ExecuteActivity<CancelarCotacaoActivity>();
-            //     return ExecutionResult.Next();
-        // })
-        // .Then<VerificarAprovacaoStep>()
-        // .If(data => data.Aprovada)
-        // .Then<GerarApoliceStep>()
-        //.EndIf();
     }
 }
 
 public class CotacaoData
 {
-    public Guid CotacaoId { get; set; }
-    public bool Aprovada { get; set; }
+    public Guid CotacaoId { get; set; } 
+    public bool Aprovado { get; set; }
 }
