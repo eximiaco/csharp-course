@@ -1,3 +1,4 @@
+using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco.Regras;
 using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CorretoraSeguro.HttpService.Domain.Sinistros;
 using WorkflowCore.Exceptions;
@@ -6,7 +7,7 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco;
 
 public class CalcularRiscoParaCotacaoHandler(
     CotacoesRepository cotacoesRepository,
-    CalculadoraRisco calculadora,
+    CalculadoraRiscoService calculadora,
     UnitOfWork unitOfWork,
     IHistoricoAcidentesService historicoService)
 {
