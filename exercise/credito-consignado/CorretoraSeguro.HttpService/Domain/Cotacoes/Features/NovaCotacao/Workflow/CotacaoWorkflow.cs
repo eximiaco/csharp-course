@@ -16,8 +16,9 @@ public class CotacaoWorkflow : IWorkflow<CotacaoData>
             .Then<CalcularBaseSeguroStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId)
             .Then<CalcularValorFinalStep>()
+            .Input(step => step.CotacaoId, data => data.CotacaoId)
+            .Then<EnviarEmailCotacaoStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId);
-            // .Then<EnviarEmailCotacaoStep>()
             // .Then<AguardarAprovacaoStep>()
             // .OnTimeout(TimeSpan.FromDays(5), (data, context) => 
             // {
