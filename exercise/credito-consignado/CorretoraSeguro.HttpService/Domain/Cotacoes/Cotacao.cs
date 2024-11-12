@@ -100,12 +100,6 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             ValorBase = Coberturas.Sum(cobertura => cobertura.CalcularValor(valorMercado));
         }
 
-        public void AtualizarValorFinal(decimal valorFinal)
-        {
-            ValorFinal = valorFinal;
-            Status = StatusCotacao.AguardandoAprovacao;
-        }
-
         public void Aprovar()
         {
             Status = StatusCotacao.Aprovada;
@@ -115,6 +109,25 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
         public void Cancelar()
         {
             Status = StatusCotacao.Cancelada;
+        }
+
+        public void CalcularValorFinal()
+        {
+            if (!NivelRisco.HasValue || !ValorBase.HasValue)
+                return;
+
+            decimal fatorRisco = NivelRisco.Value switch
+            {
+                1 => 1.00m,
+                2 => 1.05m,
+                3 => 1.10m,
+                4 => 1.20m,
+                5 => 1.30m,
+                _ => 1.00m
+            };
+
+            ValorFinal = ValorBase.Value * fatorRisco;
+            Status = StatusCotacao.ValorBaseCalculado;
         }
     }
 

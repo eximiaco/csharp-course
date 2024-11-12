@@ -14,14 +14,15 @@ public class CotacaoWorkflow : IWorkflow<CotacaoData>
             .StartWith<CalcularRiscoStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId)
             .Then<CalcularBaseSeguroStep>()
+            .Input(step => step.CotacaoId, data => data.CotacaoId)
+            .Then<CalcularValorFinalStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId);
-        // .Then<CalcularValorFinalStep>()
-        // .Then<EnviarEmailCotacaoStep>()
-        // .Then<AguardarAprovacaoStep>()
-        // .OnTimeout(TimeSpan.FromDays(5), (data, context) => 
-        // {
-        //     context.ExecuteActivity<CancelarCotacaoActivity>();
-        //     return ExecutionResult.Next();
+            // .Then<EnviarEmailCotacaoStep>()
+            // .Then<AguardarAprovacaoStep>()
+            // .OnTimeout(TimeSpan.FromDays(5), (data, context) => 
+            // {
+            //     context.ExecuteActivity<CancelarCotacaoActivity>();
+            //     return ExecutionResult.Next();
         // })
         // .Then<VerificarAprovacaoStep>()
         // .If(data => data.Aprovada)
