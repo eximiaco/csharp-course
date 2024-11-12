@@ -1,11 +1,28 @@
-using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes
 {
     public sealed class Cotacao : Entity<Guid>
     {
-        public StatusCotacao Status { get; private set; }
+        private readonly List<CoberturaCalculada> _coberturas = new();
+
+        private Cotacao(
+            Guid id,
+            DadosVeiculo veiculo,
+            DadosProprietario proprietario,
+            DadosCondutor condutor,
+            List<CoberturaCalculada> coberturas) : base(id)
+        {
+            Id = Guid.NewGuid();
+            Veiculo = veiculo;
+            Proprietario = proprietario;
+            Condutor = condutor;
+            Status = EStatusCotacao.Nova;
+            DataCriacao = DateTime.UtcNow;
+            _coberturas = coberturas;
+        }
+
+        public EStatusCotacao Status { get; private set; }
         public DadosVeiculo Veiculo { get; private set; }
         public DadosProprietario Proprietario { get; private set; }
         public DadosCondutor Condutor { get; private set; }
@@ -14,49 +31,7 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
         public decimal? ValorFinal { get; private set; }
         public DateTime DataCriacao { get; private set; }
         public DateTime? DataAprovacao { get; private set; }
-
-        private readonly List<CoberturaCalculada> _coberturas = new();
         public IReadOnlyCollection<CoberturaCalculada> Coberturas => _coberturas.AsReadOnly();
-
-        public record DadosVeiculo(
-            string Marca,
-            string Modelo,
-            int Ano
-        );
-
-        public record DadosProprietario(
-            string Cpf,
-            string Nome,
-            DateTime DataNascimento,
-            DadosEndereco Residencia
-        );
-
-        public record DadosCondutor(
-            string Cpf,
-            DateTime DataNascimento,
-            DadosEndereco Residencia
-        );
-
-        public record DadosEndereco(
-            string Cep,
-            string Cidade,
-            string UF
-        );
-
-        private Cotacao(
-            DadosVeiculo veiculo,
-            DadosProprietario proprietario,
-            DadosCondutor condutor,
-            List<CoberturaCalculada> coberturas)
-        {
-            Id = Guid.NewGuid();
-            Veiculo = veiculo;
-            Proprietario = proprietario;
-            Condutor = condutor;
-            Status = StatusCotacao.Nova;
-            DataCriacao = DateTime.UtcNow;
-            _coberturas = coberturas;
-        }
 
         public static Result<Cotacao> Criar(
             DadosVeiculo veiculo,
@@ -65,34 +40,35 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             IEnumerable<Cobertura> coberturas)
         {
             var coberturasCalculadas = coberturas.Select(c => 
-                new CoberturaCalculada(c.Tipo, 0) // Iniciando com valor zero
+                new CoberturaCalculada(Guid.NewGuid(), c.Tipo, 0) // Iniciando com valor zero
             ).ToList();
 
             if (veiculo is null)
-                return Result.Failure<Cotacao>("Veículo é obrigatório");
+                return Result.Failure<Cotacao>("Veículo é obrigatório.");
 
             if (proprietario is null)
-                return Result.Failure<Cotacao>("Proprietário é obrigatório");
+                return Result.Failure<Cotacao>("Proprietário é obrigatório.");
 
             if (condutor is null)
-                return Result.Failure<Cotacao>("Condutor é obrigatório");
+                return Result.Failure<Cotacao>("Condutor é obrigatório.");
 
             if (coberturasCalculadas is null || !coberturasCalculadas.Any())
-                return Result.Failure<Cotacao>("Pelo menos uma cobertura deve ser informada");
+                return Result.Failure<Cotacao>("Pelo menos uma cobertura deve ser informada.");
 
             var cotacao = new Cotacao(
+                Guid.NewGuid(),
                 veiculo,
                 proprietario,
                 condutor,
                 coberturasCalculadas);
 
-            return Result.Success(cotacao);
+            return cotacao;
         }
 
         public void AtualizarRisco(int nivelRisco)
         {
             NivelRisco = nivelRisco;
-            Status = StatusCotacao.RiscoCalculado;
+            Status = EStatusCotacao.RiscoCalculado;
         }
 
         public void AtualizarValorBase(decimal valorMercado)
@@ -103,22 +79,27 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
         public void AtualizarValorFinal(decimal valorFinal)
         {
             ValorFinal = valorFinal;
-            Status = StatusCotacao.AguardandoAprovacao;
+            Status = EStatusCotacao.AguardandoAprovacao;
         }
 
         public void Aprovar()
         {
-            Status = StatusCotacao.Aprovada;
+            Status = EStatusCotacao.Aprovada;
             DataAprovacao = DateTime.UtcNow;
         }
 
         public void Cancelar()
         {
-            Status = StatusCotacao.Cancelada;
+            Status = EStatusCotacao.Cancelada;
         }
+
+        public record DadosVeiculo(string Marca, string Modelo, int Ano);
+        public record DadosProprietario(string Cpf, string Nome, DateTime DataNascimento, DadosEndereco Residencia);
+        public record DadosCondutor(string Cpf, DateTime DataNascimento, DadosEndereco Residencia);
+        public record DadosEndereco(string Cep, string Cidade, string UF);
     }
 
-    public enum StatusCotacao
+    public enum EStatusCotacao
     {
         Nova,
         RiscoCalculado,

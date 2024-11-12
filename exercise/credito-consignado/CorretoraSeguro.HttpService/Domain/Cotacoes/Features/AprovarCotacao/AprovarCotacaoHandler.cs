@@ -26,7 +26,7 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.AprovarCotacao
             if (cotacao == null)
                 return Result.Failure<string>("Cotação não encontrada");
 
-            if (cotacao.Status != StatusCotacao.AguardandoAprovacao)
+            if (cotacao.Status != EStatusCotacao.AguardandoAprovacao)
                 return Result.Failure<string>("Cotação não está aguardando aprovação");
 
             cotacao.Aprovar();

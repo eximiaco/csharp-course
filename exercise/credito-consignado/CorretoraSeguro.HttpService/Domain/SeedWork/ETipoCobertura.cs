@@ -1,6 +1,6 @@
 namespace CorretoraSeguro.HttpService.Domain.SeedWork;
 
-public enum TipoCobertura
+public enum ETipoCobertura
 {
     Basica,
     Roubo,
