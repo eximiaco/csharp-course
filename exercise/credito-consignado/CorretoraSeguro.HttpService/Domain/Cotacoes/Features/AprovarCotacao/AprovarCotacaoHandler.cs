@@ -10,6 +10,14 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.AprovarCotacao
         private readonly PropostasDbContext _dbContext;
         private readonly IWorkflowHost _workflowHost;
 
+        public AprovarCotacaoHandler(
+            PropostasDbContext dbContext,
+            IWorkflowHost workflowHost)
+        {
+            _dbContext = dbContext;
+            _workflowHost = workflowHost;
+        }
+
         public async Task<Result<string>> Handle(Guid cotacaoId, CancellationToken cancellationToken)
         {
             var cotacao = await _dbContext.Cotacoes

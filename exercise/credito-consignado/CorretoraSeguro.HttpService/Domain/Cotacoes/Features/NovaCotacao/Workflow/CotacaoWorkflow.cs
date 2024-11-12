@@ -1,3 +1,4 @@
+using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow.Steps;
 using WorkflowCore.Interface;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow;
@@ -11,8 +12,9 @@ public class CotacaoWorkflow : IWorkflow<CotacaoData>
     {
         builder
             .StartWith<CalcularRiscoStep>()
+            .Input(step => step.CotacaoId, data => data.CotacaoId)
+            .Then<CalcularBaseSeguroStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId);
-        // .Then<CalcularBaseSeguroStep>()
         // .Then<CalcularValorFinalStep>()
         // .Then<EnviarEmailCotacaoStep>()
         // .Then<AguardarAprovacaoStep>()
