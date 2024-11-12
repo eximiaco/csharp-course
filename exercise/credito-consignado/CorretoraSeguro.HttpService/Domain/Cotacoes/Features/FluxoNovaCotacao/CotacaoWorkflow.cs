@@ -1,7 +1,7 @@
-using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow.Steps;
+using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.FluxoNovaCotacao.Steps;
 using WorkflowCore.Interface;
 
-namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow;
+namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.FluxoNovaCotacao;
 
 public class CotacaoWorkflow : IWorkflow<CotacaoData>
 {
@@ -22,14 +22,16 @@ public class CotacaoWorkflow : IWorkflow<CotacaoData>
             .Parallel()
                 .Do(then => then
                     .StartWith<NoOpStep>()
-                    .WaitFor("AprovacaoCotacao", (data, context) => data.CotacaoId.ToString()))
+                    .WaitFor("AprovacaoCotacao", (data, context) => data.CotacaoId.ToString())
+                    .Then<AtualizarAprovacaoStep>()
+                    .Input(step => step.CotacaoId, data => data.CotacaoId))
                 .Do(then => then
                     .StartWith<NoOpStep>()
                     .Delay(data => TimeSpan.FromDays(5))
                     .Then<CancelarCotacaoStep>()
                     .Input(step => step.CotacaoId, data => data.CotacaoId))
             .Join()
-                .CancelCondition(data => data.Aprovado, true)
+                .CancelCondition(data => !data.Aprovado, true)
             .Then<GerarApoliceStep>()
             .Input(step => step.CotacaoId, data => data.CotacaoId);
     }

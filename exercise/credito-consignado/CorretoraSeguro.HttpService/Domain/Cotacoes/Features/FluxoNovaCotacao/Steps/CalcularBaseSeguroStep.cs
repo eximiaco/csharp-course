@@ -2,7 +2,7 @@ using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularSeguroBase;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 
-namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow.Steps;
+namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.FluxoNovaCotacao.Steps;
 
 public class CalcularBaseSeguroStep(CalcularSeguroBaseHandler handler) : IStepBody
 {

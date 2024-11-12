@@ -1,5 +1,7 @@
-using WorkflowCore.Models;
 using WorkflowCore.Interface;
+using WorkflowCore.Models;
+
+namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.FluxoNovaCotacao.Steps;
 
 public class NoOpStep : StepBody
 {
@@ -7,4 +9,4 @@ public class NoOpStep : StepBody
     {
         return ExecutionResult.Next();
     }
-} 
+}
