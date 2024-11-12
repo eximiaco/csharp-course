@@ -25,6 +25,12 @@ try
         .AddLogs(builder.Configuration, serviceName!)
         .AddCustomMvc();
     
+    builder.Services.AddWorkflow(x =>
+    {
+        x.UseSqlServer(builder.Configuration.GetConnectionString("WorkflowDatabase"), true, true);
+        //x.UseRedisLocking("localhost:6379");
+    });
+    
     builder.Services.AddDbContext<PropostasDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("PropostasConnection")));
     builder.Services.AddHostedService<DatabaseInitializer>();

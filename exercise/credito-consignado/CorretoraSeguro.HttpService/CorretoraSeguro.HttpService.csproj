@@ -33,6 +33,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
         <PackageReference Include="WorkflowCore" Version="3.11.0" />
+        <PackageReference Include="WorkflowCore.Persistence.SqlServer" Version="3.11.0" />
     </ItemGroup>
 
 </Project>

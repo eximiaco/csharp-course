@@ -93,6 +93,25 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes
             Status = EStatusCotacao.Cancelada;
         }
 
+        public void CalcularValorFinal()
+        {
+            if (!NivelRisco.HasValue || !ValorBase.HasValue)
+                return;
+
+            decimal fatorRisco = NivelRisco.Value switch
+            {
+                1 => 1.00m,
+                2 => 1.05m,
+                3 => 1.10m,
+                4 => 1.20m,
+                5 => 1.30m,
+                _ => 1.00m
+            };
+
+            ValorFinal = ValorBase.Value * fatorRisco;
+            Status = EStatusCotacao.ValorBaseCalculado;
+        }
+
         public record DadosVeiculo(string Marca, string Modelo, int Ano);
         public record DadosProprietario(string Cpf, string Nome, DateTime DataNascimento, DadosEndereco Residencia);
         public record DadosCondutor(string Cpf, DateTime DataNascimento, DadosEndereco Residencia);
