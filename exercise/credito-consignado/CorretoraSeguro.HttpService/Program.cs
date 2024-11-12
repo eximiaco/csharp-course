@@ -28,7 +28,6 @@ try
     builder.Services.AddWorkflow(x =>
     {
         x.UseSqlServer(builder.Configuration.GetConnectionString("WorkflowDatabase"), true, true);
-        //x.UseRedisLocking("localhost:6379");
     });
     
     builder.Services.AddDbContext<PropostasDbContext>(options =>

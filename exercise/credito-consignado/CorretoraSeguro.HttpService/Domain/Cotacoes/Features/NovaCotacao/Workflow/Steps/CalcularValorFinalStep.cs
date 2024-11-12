@@ -11,8 +11,7 @@ namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workf
         public async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
             var command = new CalcularValorFinalCommand(CotacaoId);
-            await handler.Handle(command, CancellationToken.None);
-            
+            await handler.Handle(command, CancellationToken.None);            
             return ExecutionResult.Next();
         }
     }

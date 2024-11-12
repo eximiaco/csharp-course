@@ -11,8 +11,7 @@ public class CalcularBaseSeguroStep(CalcularSeguroBaseHandler handler) : IStepBo
     public async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
     {
         var command = new CalcularSeguroBaseCommand(CotacaoId);
-        await handler.ExecuteAsync(command);
-        
+        await handler.ExecuteAsync(command);        
         return ExecutionResult.Next();
     }
 } 

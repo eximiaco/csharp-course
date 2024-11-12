@@ -1,27 +1,29 @@
 using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CorretoraSeguro.HttpService.Domain.Sinistros;
+using WorkflowCore.Exceptions;
 
 namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco;
 
 public class CalcularRiscoParaCotacaoHandler(
-    PropostasDbContext dbContext,
+    CotacoesRepository cotacoesRepository,
     CalculadoraRisco calculadora,
+    UnitOfWork unitOfWork,
     IHistoricoAcidentesService historicoService)
 {
     public async Task ExecuteAsync(CalcularRiscoParaCotacaoCommand command, CancellationToken cancellationToken = default)
     {
-        var cotacao = await dbContext.Cotacoes
-            .FindAsync(command.CotacaoId, cancellationToken);
+        var cotacao = await cotacoesRepository.ObterPorIdAsync(command.CotacaoId, cancellationToken).ConfigureAwait(false);
+        if (cotacao.HasNoValue)
+            throw new NotFoundException("Cotação não encontrada.");
 
-        var historico = await historicoService
-            .ObterHistorico(cotacao.Condutor.Cpf);
+        var historico = await historicoService.ObterHistorico(cotacao.Value.Condutor.Cpf).ConfigureAwait(false);
 
         var nivelRisco = calculadora.Calcular(
-            cotacao.Condutor.DataNascimento,
+            cotacao.Value.Condutor.DataNascimento,
             historico,
-            cotacao.Condutor.Residencia.UF);
+            cotacao.Value.Condutor.Residencia.UF);
 
-        cotacao.AtualizarRisco(nivelRisco);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        cotacao.Value.AtualizarRisco(nivelRisco);
+        await unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 } 
