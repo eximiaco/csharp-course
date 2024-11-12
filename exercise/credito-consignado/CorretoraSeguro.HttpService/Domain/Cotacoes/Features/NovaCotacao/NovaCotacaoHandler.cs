@@ -1,5 +1,5 @@
 using CorretoraSeguro.HttpService.Domain.Coberturas;
-using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow;
+using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.FluxoNovaCotacao;
 using CorretoraSeguro.HttpService.Domain.SeedWork;
 using CSharpFunctionalExtensions;
 using WorkflowCore.Interface;

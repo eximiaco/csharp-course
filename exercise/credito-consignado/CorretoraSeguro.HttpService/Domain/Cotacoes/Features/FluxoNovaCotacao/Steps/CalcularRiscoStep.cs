@@ -1,10 +1,11 @@
+using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco;
 using CorretoraSeguro.HttpService.Domain.Sinistros;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco;
 using CorretoraSeguro.HttpService.Domain.Cotacoes.Features.CalcularRisco.Regras;
 
-namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.NovaCotacao.Workflow.Steps;
+namespace CorretoraSeguro.HttpService.Domain.Cotacoes.Features.FluxoNovaCotacao.Steps;
 
 public class CalcularRiscoStep(
     CalculadoraRiscoService calculadora,
